@@ -3,3 +3,7 @@ export { default as Footer } from './Footer';
 export { default as GameUI } from './GameUI';
 export { default as PhaserGame } from './PhaserGame';
 export type { PhaserGameRef } from './PhaserGame';
+export { default as TowerSelectionPanel } from './TowerSelectionPanel';
+export { default as TowerPanel } from './TowerPanel';
+export { default as PauseMenu } from './PauseMenu';
+export { default as GameOverScreen } from './GameOverScreen';

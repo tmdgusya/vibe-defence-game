@@ -87,6 +87,10 @@ export type GameEventType =
   | 'towerPlaced'
   | 'towerMerged'
   | 'towerSold'
+  | 'towerSelected'
+  | 'towerDeselected'
+  | 'towerUpgrade'
+  | 'mergeAvailable'
   | 'enemySpawned'
   | 'enemyKilled'
   | 'enemyReachedEnd'
@@ -103,6 +107,10 @@ export interface GameEvents {
   towerPlaced: { tower: TowerData };
   towerMerged: { result: TowerData; consumed: TowerData[] };
   towerSold: { tower: TowerData; refund: number };
+  towerSelected: { tower: TowerData };
+  towerDeselected: Record<string, never>;
+  towerUpgrade: { tower: TowerData; cost: number };
+  mergeAvailable: { available: boolean };
   enemySpawned: { enemy: EnemyData };
   enemyKilled: { enemy: EnemyData; reward: number };
   enemyReachedEnd: { enemy: EnemyData; damage: number };

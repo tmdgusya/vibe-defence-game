@@ -41,7 +41,6 @@ export default defineConfig(({ mode }) => {
             vendor: ['react', 'react-dom', 'zustand'],
             phaser: ['phaser'],
             audio: ['howler'],
-            game: ['./src/scenes/', './src/entities/', './src/systems/'],
           },
           chunkFileNames: isProduction
             ? 'assets/js/[name]-[hash].js'

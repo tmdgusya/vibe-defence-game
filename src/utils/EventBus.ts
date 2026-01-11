@@ -25,6 +25,43 @@ export interface EventData {
       | 'no_tower_selected';
     message: string;
   };
+  towerSelected: {
+    tower: {
+      type: string;
+      level: number;
+      gridX: number;
+      gridY: number;
+      damage: number;
+      attackSpeed: number;
+      range: number;
+      cost: number;
+    };
+  };
+  towerDeselected: Record<string, never>;
+  towerUpgrade: {
+    tower: {
+      type: string;
+      level: number;
+      gridX: number;
+      gridY: number;
+      damage: number;
+      attackSpeed: number;
+      range: number;
+      cost: number;
+    };
+    cost: number;
+  };
+  towerMerge: {
+    tower: {
+      type: string;
+      level: number;
+      gridX: number;
+      gridY: number;
+    };
+  };
+  mergeAvailable: {
+    available: boolean;
+  };
   towerPlaced: {
     tower: {
       type: string;
