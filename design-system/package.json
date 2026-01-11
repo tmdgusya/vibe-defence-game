@@ -1,0 +1,19 @@
+{
+  "name": "design-system",
+  "version": "1.0.0",
+  "description": "Vibrant cartoon design system for tower defense game",
+  "scripts": {
+    "validate": "node design-system/tests/asset-validation.js",
+    "validate:assets": "node design-system/tests/asset-validation.js public/assets",
+    "test": "npm run validate:assets",
+    "build:tokens": "node design-system/scripts/build-tokens.js",
+    "watch": "node design-system/scripts/watch-assets.js"
+  },
+  "devDependencies": {
+    "chalk": "^4.1.2",
+    "glob": "^8.0.3"
+  },
+  "keywords": ["design-system", "tower-defense", "cartoon", "game"],
+  "author": "Design Team",
+  "license": "MIT"
+}

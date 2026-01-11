@@ -1,0 +1,66 @@
+{
+  "fonts": {
+    "primary": {
+      "family": "Comic Sans MS, cursive",
+      "weights": {
+        "normal": 400,
+        "bold": 700
+      },
+      "sizes": {
+        "xs": "12px",
+        "sm": "14px",
+        "base": "16px",
+        "lg": "18px",
+        "xl": "24px",
+        "2xl": "32px",
+        "3xl": "48px",
+        "4xl": "64px"
+      }
+    },
+    "game": {
+      "family": "Press Start 2P, monospace",
+      "weights": {
+        "normal": 400
+      },
+      "sizes": {
+        "ui": "10px",
+        "small": "12px",
+        "medium": "14px",
+        "large": "18px",
+        "xlarge": "24px"
+      }
+    },
+    "ui": {
+      "family": "Arial, sans-serif",
+      "weights": {
+        "normal": 400,
+        "medium": 500,
+        "bold": 700
+      },
+      "sizes": {
+        "button": "14px",
+        "label": "12px",
+        "value": "16px",
+        "title": "18px",
+        "heading": "24px"
+      }
+    }
+  },
+  "lineHeight": {
+    "tight": "1.0",
+    "normal": "1.2",
+    "relaxed": "1.4",
+    "loose": "1.6"
+  },
+  "letterSpacing": {
+    "tight": "-0.5px",
+    "normal": "0px",
+    "wide": "0.5px",
+    "wider": "1px"
+  },
+  "textAlign": {
+    "left": "left",
+    "center": "center",
+    "right": "right"
+  }
+}

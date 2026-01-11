@@ -1,0 +1,83 @@
+{
+  "name": "vibrant-cartoon-td",
+  "version": "1.0.0",
+  "description": "Vibrant cartoon design system for tower defense game",
+  "tokens": {
+    "colors": "./tokens/colors.json",
+    "typography": "./tokens/typography.json",
+    "spacing": "./tokens/spacing.json",
+    "animation": "./tokens/animation.json"
+  },
+  "components": {
+    "towers": "./components/towers/",
+    "enemies": "./components/enemies/",
+    "ui": "./components/ui/"
+  },
+  "templates": {
+    "tower": "./templates/tower-template.psd",
+    "enemy": "./templates/enemy-template.psd",
+    "ui": "./templates/ui-template.psd"
+  },
+  "guidelines": {
+    "visual": "./guidelines/visual-style-guide.md",
+    "naming": "./guidelines/naming-conventions.md",
+    "performance": "./guidelines/performance-guide.md",
+    "integration": "./guidelines/integration-plan.md"
+  },
+  "tests": {
+    "validation": "./tests/asset-validation.js"
+  },
+  "assets": {
+    "directory": "../public/assets",
+    "structure": {
+      "towers": "towers/{type}/",
+      "enemies": "enemies/{type}/",
+      "ui": "ui/{category}/",
+      "effects": "effects/",
+      "sounds": "sounds/{category}/",
+      "backgrounds": "backgrounds/"
+    }
+  },
+  "budget": {
+    "total": "2MB",
+    "towers": "90KB per sprite",
+    "enemies": "100KB per sprite",
+    "ui": "20KB per element",
+    "effects": "50KB per effect",
+    "sounds": "30KB per sound",
+    "backgrounds": "80KB per background"
+  },
+  "targets": {
+    "performance": {
+      "fps": 60,
+      "loading": "3 seconds",
+      "memory": "100MB"
+    },
+    "accessibility": {
+      "contrast": "WCAG AA",
+      "fontSize": "12px minimum",
+      "keyboard": "Full support"
+    },
+    "compatibility": {
+      "browsers": ["Chrome", "Firefox", "Safari", "Edge"],
+      "devices": ["Desktop", "Tablet", "Mobile"]
+    }
+  },
+  "timeline": {
+    "day1": "System Architecture",
+    "day2": "Visual Style Guide",
+    "day3": "Asset Pipeline",
+    "day4": "Tower Assets Level 1",
+    "day5": "Tower Assets Level 2-3",
+    "day6": "Enemy Assets",
+    "day7": "UI Components",
+    "day8": "System Integration",
+    "day9": "Performance Optimization",
+    "day10": "Visual Effects",
+    "day11": "Environmental Assets",
+    "day12": "Audio Integration",
+    "day13": "Advanced Polish",
+    "day14": "Final Testing",
+    "day15": "Launch Preparation"
+  }
+}

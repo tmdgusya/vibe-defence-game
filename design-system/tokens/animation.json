@@ -1,0 +1,113 @@
+{
+  "timing": {
+    "instant": "0ms",
+    "fast": "200ms",
+    "normal": "400ms",
+    "slow": "600ms",
+    "slower": "1000ms"
+  },
+  "easing": {
+    "linear": "linear",
+    "ease": "ease",
+    "easeIn": "cubic-bezier(0.4, 0, 1, 1)",
+    "easeOut": "cubic-bezier(0, 0, 0.2, 1)",
+    "easeInOut": "cubic-bezier(0.4, 0, 0.2, 1)",
+    "bounce": "cubic-bezier(0.68, -0.55, 0.265, 1.55)",
+    "elastic": "cubic-bezier(0.175, 0.885, 0.32, 1.275)"
+  },
+  "animations": {
+    "entrance": {
+      "duration": "300ms",
+      "easing": "bounce"
+    },
+    "exit": {
+      "duration": "200ms",
+      "easing": "easeIn"
+    },
+    "hover": {
+      "duration": "150ms",
+      "easing": "easeOut"
+    },
+    "click": {
+      "duration": "100ms",
+      "easing": "easeOut"
+    },
+    "merge": {
+      "duration": "600ms",
+      "easing": "bounce"
+    },
+    "damage": {
+      "duration": "200ms",
+      "easing": "easeOut"
+    },
+    "death": {
+      "duration": "800ms",
+      "easing": "easeIn"
+    }
+  },
+  "game": {
+    "towerPlace": {
+      "duration": "300ms",
+      "easing": "bounce"
+    },
+    "towerShoot": {
+      "duration": "150ms",
+      "easing": "easeOut"
+    },
+    "enemySpawn": {
+      "duration": "400ms",
+      "easing": "bounce"
+    },
+    "projectile": {
+      "duration": "800ms",
+      "easing": "linear"
+    },
+    "explosion": {
+      "duration": "500ms",
+      "easing": "easeOut"
+    },
+    "moneyCollect": {
+      "duration": "600ms",
+      "easing": "bounce"
+    },
+    "levelComplete": {
+      "duration": "1000ms",
+      "easing": "elastic"
+    }
+  },
+  "ui": {
+    "buttonPress": {
+      "duration": "100ms",
+      "easing": "easeOut"
+    },
+    "panelOpen": {
+      "duration": "300ms",
+      "easing": "easeOut"
+    },
+    "tooltip": {
+      "duration": "200ms",
+      "easing": "easeOut"
+    },
+    "notification": {
+      "duration": "400ms",
+      "easing": "bounce"
+    }
+  },
+  "particles": {
+    "sparkle": {
+      "duration": "800ms",
+      "count": "12",
+      "spread": "45deg"
+    },
+    "explosion": {
+      "duration": "600ms",
+      "count": "20",
+      "spread": "360deg"
+    },
+    "merge": {
+      "duration": "1000ms",
+      "count": "16",
+      "spread": "90deg"
+    }
+  }
+}
