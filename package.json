@@ -1,0 +1,46 @@
+{
+  "name": "defence-game",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Tower defense game with merging mechanics built with Phaser.js and React",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "lint": "eslint src --ext ts,tsx",
+    "lint:fix": "eslint src --ext ts,tsx --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "howler": "^2.2.4",
+    "phaser": "^3.80.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "zustand": "^5.0.3"
+  },
+  "devDependencies": {
+    "@types/howler": "^2.2.12",
+    "@types/node": "^22.10.6",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@typescript-eslint/eslint-plugin": "^8.20.0",
+    "@typescript-eslint/parser": "^8.20.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^8.57.1",
+    "eslint-plugin-react": "^7.37.4",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "postcss": "^8.5.1",
+    "prettier": "^3.4.2",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.3",
+    "vite": "^6.0.7",
+    "vitest": "^2.1.8"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

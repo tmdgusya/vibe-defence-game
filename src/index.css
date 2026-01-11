@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background-color: #1a1a2e;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Game container styling */
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 1rem;
+}
+
+/* Phaser canvas container */
+#phaser-container {
+  border: 3px solid #4a90d9;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(74, 144, 217, 0.3);
+  overflow: hidden;
+}
+
+#phaser-container canvas {
+  display: block;
+}
