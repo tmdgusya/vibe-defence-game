@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { loadEnemySprites, createEnemyAnimations } from '../entities';
 
 export default class BootScene extends Phaser.Scene {
   private loadingBar!: Phaser.GameObjects.Graphics;
@@ -13,6 +14,7 @@ export default class BootScene extends Phaser.Scene {
     this.createLoadingUI();
     this.setupLoadEvents();
 
+    loadEnemySprites(this);
     this.simulateLoading();
   }
 
@@ -24,6 +26,7 @@ export default class BootScene extends Phaser.Scene {
       console.log('Renderer: Canvas');
     }
 
+    createEnemyAnimations(this);
     this.scene.start('GameScene');
   }
 
@@ -75,10 +78,7 @@ export default class BootScene extends Phaser.Scene {
 
     this.generateTowerTextures(graphics);
 
-    graphics.clear();
-    graphics.fillStyle(0xe74c3c);
-    graphics.fillCircle(32, 32, 24);
-    graphics.generateTexture('enemy-placeholder', 64, 64);
+    this.generateEnemyTextures(graphics);
 
     graphics.clear();
     graphics.fillStyle(0xf39c12);
@@ -91,6 +91,37 @@ export default class BootScene extends Phaser.Scene {
     graphics.generateTexture('grid-cell', 80, 80);
 
     graphics.destroy();
+  }
+
+  private generateEnemyTextures(graphics: Phaser.GameObjects.Graphics): void {
+    const enemyConfigs = {
+      'enemy-basic': { color: 0xe74c3c, size: 24 },
+      'enemy-tank': { color: 0x8b4513, size: 32 },
+      'enemy-flying': { color: 0x9b59b6, size: 20 },
+      'enemy-boss': { color: 0x2c3e50, size: 40 },
+      'enemy-swarm': { color: 0xe67e22, size: 16 },
+      'enemy-armored': { color: 0x34495e, size: 28 },
+    };
+
+    Object.entries(enemyConfigs).forEach(([key, config]) => {
+      graphics.clear();
+      graphics.fillStyle(config.color);
+      graphics.fillCircle(32, 32, config.size);
+
+      if (key === 'enemy-boss') {
+        graphics.fillStyle(0xc0392b);
+        graphics.fillCircle(32, 32, config.size * 0.7);
+      } else if (key === 'enemy-armored') {
+        graphics.lineStyle(2, 0xffffff, 0.8);
+        graphics.strokeCircle(32, 32, config.size + 4);
+      } else if (key === 'enemy-flying') {
+        graphics.fillStyle(0x8e44ad);
+        graphics.fillCircle(24, 24, config.size * 0.6);
+        graphics.fillCircle(40, 24, config.size * 0.6);
+      }
+
+      graphics.generateTexture(key, 64, 64);
+    });
   }
 
   private generateTowerTextures(graphics: Phaser.GameObjects.Graphics): void {
