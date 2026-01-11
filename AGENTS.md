@@ -1,6 +1,6 @@
 # DEFENCE GAME - PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-01-11 23:14:00
+**Generated:** 2026-01-12 00:16:19
 **Commit:** 231f982 Music design (vibe-kanban 39229350)
 **Branch:** main
 
@@ -15,12 +15,12 @@ Tower defense game with Phaser.js for rendering, React for UI, and TypeScript. F
 ├── src/
 │   ├── components/    # React UI components (PhaserGame, GameUI, TowerPanel)
 │   ├── config/       # Phaser configuration (PhaserConfig.ts)
-│   ├── entities/     # Phaser game objects (Tower)
+│   ├── entities/     # Phaser game objects (Tower, Enemy, Projectile)
 │   ├── hooks/        # React hooks (useGameLoop, useKeyboardControls)
 │   ├── scenes/       # Phaser scenes (BootScene, GameScene)
 │   ├── store/        # Zustand state management (gameStore.ts)
-│   ├── systems/      # Game logic (TowerSystem)
-│   ├── test/         # Test setup and utilities
+│   ├── systems/      # Game logic (TowerSystem, EnemySystem, ProjectileSystem)
+│   ├── test/         # Test setup with Phaser/Howler mocks
 │   ├── types/        # TypeScript definitions (GameEvents, enums, interfaces)
 │   └── utils/       # Shared utilities (EventBus)
 ├── design-system/    # Design tokens, guidelines, tests (mini-monorepo)
