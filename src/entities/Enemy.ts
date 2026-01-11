@@ -18,6 +18,7 @@ export class Enemy extends Phaser.GameObjects.Container {
   private enemyData: EnemyData;
   private config: EnemyConfig;
   private moveTween?: Phaser.Tweens.TweenChain;
+  private isStopped: boolean = false;
 
   constructor(
     scene: Phaser.Scene,
@@ -111,6 +112,10 @@ export class Enemy extends Phaser.GameObjects.Container {
   }
 
   public moveAlongPath(path: Phaser.Math.Vector2[]): void {
+    if (this.isStopped) {
+      return;
+    }
+
     if (this.moveTween) {
       this.moveTween.destroy();
     }
@@ -225,6 +230,24 @@ export class Enemy extends Phaser.GameObjects.Container {
         this.moveAlongPath(remainingPath);
       }
     }
+  }
+
+  public stop(): void {
+    this.isStopped = true;
+    if (this.moveTween) {
+      this.moveTween.pause();
+    }
+  }
+
+  public resume(): void {
+    this.isStopped = false;
+    if (this.moveTween) {
+      this.moveTween.resume();
+    }
+  }
+
+  public isMovementStopped(): boolean {
+    return this.isStopped;
   }
 
   public slowDown(factor: number, duration: number): void {

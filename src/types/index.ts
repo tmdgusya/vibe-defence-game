@@ -18,11 +18,24 @@ export const GAME_CONFIG = {
   FPS: 60,
 } as const;
 
+export const COLLISION_CONFIG = {
+  PROJECTILE_HIT_DISTANCE: 10,
+  TOWER_BLOCK_DISTANCE: 40,
+  SPLASH_EFFECT_DURATION: 300,
+  DEBUG_COLORS: {
+    TOWER: 0x00ff00,
+    ENEMY: 0xff0000,
+    PROJECTILE: 0xffff00,
+    SPLASH_ZONE: 0xffaa00,
+  },
+} as const;
+
 // Tower types
 export enum TowerType {
   PEASHOOTER = 'peashooter',
   SUNFLOWER = 'sunflower',
   WALLNUT = 'wallnut',
+  MORTAR = 'mortar',
 }
 
 // Tower levels (merge progression)
@@ -62,6 +75,9 @@ export interface TowerData {
   attackSpeed: number;
   range: number;
   cost: number;
+  splashDamage?: number;
+  splashRadius?: number;
+  pierceCount?: number;
 }
 
 // Enemy data
@@ -77,7 +93,13 @@ export interface EnemyData {
 // Projectile data
 export interface ProjectileData {
   damage: number;
-  speed: number; // pixels per second
+  speed: number;
+  splashDamage?: number;
+  splashRadius?: number;
+  splashDamageMultiplier?: number;
+  pierceCount?: number;
+  hitEnemies: Set<any>;
+  isMortar?: boolean;
 }
 
 // Grid cell
