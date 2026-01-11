@@ -1,6 +1,8 @@
 import Phaser from 'phaser';
-import { GRID_CONFIG } from '../types';
+import { GRID_CONFIG, TowerType, TowerLevel } from '../types';
 import { EventBus } from '../utils/EventBus';
+import { Tower } from '../entities/Tower';
+import { TowerSystem } from '../systems/TowerSystem';
 
 /**
  * Main Game Scene
@@ -8,21 +10,19 @@ import { EventBus } from '../utils/EventBus';
  */
 export default class GameScene extends Phaser.Scene {
   private gridCells: Phaser.GameObjects.Image[][] = [];
+  private towerSystem: TowerSystem;
 
   constructor() {
     super({ key: 'GameScene' });
+    this.towerSystem = new TowerSystem(this);
   }
 
   create(): void {
     console.log('GameScene: Creating game world...');
 
-    // Create the grid
     this.createGrid();
-
-    // Set up input handling
     this.setupInput();
 
-    // Emit scene ready event
     EventBus.emit('sceneReady', { scene: 'GameScene' });
 
     console.log('GameScene: Game world created successfully');
@@ -101,48 +101,46 @@ export default class GameScene extends Phaser.Scene {
     console.log(`Cell clicked: (${gridX}, ${gridY}), occupied: ${isOccupied}`);
 
     if (!isOccupied) {
-      // For demo: place a placeholder tower
-      this.placePlaceholderTower(gridX, gridY);
+      this.placeTower(gridX, gridY);
     }
   }
 
   /**
    * Places a placeholder tower for demonstration
    */
-  private placePlaceholderTower(gridX: number, gridY: number): void {
+  private placeTower(gridX: number, gridY: number): void {
+    const validation = this.towerSystem.validatePlacement(gridX, gridY);
+
+    if (!validation.valid) {
+      console.log(`Invalid tower placement: ${validation.reason}`);
+      return;
+    }
+
+    const towerData = this.towerSystem.createTowerData(
+      TowerType.PEASHOOTER,
+      TowerLevel.BASIC,
+      gridX,
+      gridY
+    );
+
+    const tower = new Tower(this, towerData);
+
     const cell = this.gridCells[gridY][gridX];
-    const x = cell.x;
-    const y = cell.y;
-
-    // Create placeholder tower
-    const tower = this.add.image(x, y, 'tower-placeholder');
-    tower.setScale(0.8);
-
-    // Mark cell as occupied
     cell.setData('occupied', true);
     cell.setData('tower', tower);
 
-    // Emit tower placed event
-    EventBus.emit('towerPlaced', {
-      tower: {
-        type: 'peashooter',
-        level: 1,
-        gridX,
-        gridY,
-        damage: 10,
-        attackSpeed: 1,
-        range: 3,
-        cost: 100,
-      },
-    });
+    EventBus.emit('towerPlaced', { tower: towerData });
 
-    console.log(`Placeholder tower placed at (${gridX}, ${gridY})`);
+    console.log(`Tower placed at (${gridX}, ${gridY})`);
   }
 
   /**
    * Gets the grid cell at specified coordinates
    */
-  public getCell(gridX: number, gridY: number): Phaser.GameObjects.Image | null {
+  public getCell(
+    gridX: number,
+    gridY: number
+  ): Phaser.GameObjects.Image | null {
     if (
       gridX >= 0 &&
       gridX < GRID_CONFIG.COLS &&
