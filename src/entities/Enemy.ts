@@ -47,16 +47,23 @@ export class Enemy extends Phaser.GameObjects.Container {
     this.sprite = this.scene.add.sprite(0, 0, this.config.spriteKey);
     const scale = this.config.scale || 1.0;
     this.sprite.setScale(scale);
-
     this.sprite.setOrigin(0.5, 0.5);
+
+    // Add sprite to container so it moves with the enemy
+    this.add(this.sprite);
 
     this.scene.physics.add.existing(this);
     const body = this.body as Phaser.Physics.Arcade.Body;
-    body.setSize(this.sprite.width * 0.8, this.sprite.height * 0.8);
+    // Use scaled dimensions for physics body
+    const scaledWidth = this.sprite.width * scale * 0.8;
+    const scaledHeight = this.sprite.height * scale * 0.8;
+    body.setSize(scaledWidth, scaledHeight);
   }
 
   private createHealthBar(): void {
     this.healthBar = this.scene.add.graphics();
+    // Add healthBar to container so it moves with the enemy
+    this.add(this.healthBar);
     this.updateHealthBar();
   }
 
@@ -92,7 +99,8 @@ export class Enemy extends Phaser.GameObjects.Container {
     const path: Phaser.Math.Vector2[] = [];
     const gridWidth = 80;
 
-    for (let i = 0; i <= 9; i++) {
+    // Generate path from RIGHT to LEFT (enemies enter from right, exit left)
+    for (let i = 9; i >= 0; i--) {
       const x = i * gridWidth + 40;
       const y = this.y;
       path.push(new Phaser.Math.Vector2(x, y));
@@ -193,10 +201,16 @@ export class Enemy extends Phaser.GameObjects.Container {
   }
 
   public setSpeed(speed: number): void {
+    const oldSpeed = this.enemyData.speed;
     this.enemyData.speed = speed;
 
-    if (this.moveTween) {
-      this.moveTween.restart();
+    // If there's an active tween and speed changed, recreate path movement
+    if (this.moveTween && oldSpeed !== speed) {
+      // Get remaining path from current position
+      const remainingPath = this.getPath().filter((point) => point.x <= this.x);
+      if (remainingPath.length > 0) {
+        this.moveAlongPath(remainingPath);
+      }
     }
   }
 

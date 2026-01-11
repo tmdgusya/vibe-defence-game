@@ -120,6 +120,24 @@ export class SwarmEnemy extends Enemy {
     }
   }
 
+  public moveAlongPath(path: Phaser.Math.Vector2[]): void {
+    super.moveAlongPath(path);
+
+    // Propagate movement to swarm members with offset
+    if (this.isSwarmLeader) {
+      this.swarmMembers.forEach((member, index) => {
+        const offsetX = ((index + 1) % 2 === 0 ? 1 : -1) * 20;
+        const offsetY = Math.floor((index + 1) / 2) * 20;
+
+        const memberPath = path.map(
+          (point) =>
+            new Phaser.Math.Vector2(point.x + offsetX, point.y + offsetY)
+        );
+        member.moveAlongPath(memberPath);
+      });
+    }
+  }
+
   public onDeath(): void {
     if (this.isSwarmLeader) {
       this.swarmMembers.forEach((member) => member.destroy());

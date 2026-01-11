@@ -10,14 +10,24 @@ describe('Enemy System', () => {
       add: {
         existing: vi.fn(),
         sprite: vi.fn().mockReturnValue({
-          setScale: vi.fn(),
-          setOrigin: vi.fn(),
-          play: vi.fn(),
+          setScale: vi.fn().mockReturnThis(),
+          setOrigin: vi.fn().mockReturnThis(),
+          setTint: vi.fn().mockReturnThis(),
+          clearTint: vi.fn().mockReturnThis(),
+          play: vi.fn().mockReturnThis(),
+          on: vi.fn().mockReturnThis(),
+          destroy: vi.fn(),
+          width: 64,
+          height: 64,
+          anims: {
+            exists: vi.fn().mockReturnValue(false),
+          },
         }),
         graphics: vi.fn().mockReturnValue({
-          clear: vi.fn(),
-          fillStyle: vi.fn(),
-          fillRect: vi.fn(),
+          clear: vi.fn().mockReturnThis(),
+          fillStyle: vi.fn().mockReturnThis(),
+          fillRect: vi.fn().mockReturnThis(),
+          destroy: vi.fn(),
         }),
       },
       physics: {
@@ -26,8 +36,11 @@ describe('Enemy System', () => {
         },
       },
       tweens: {
+        add: vi.fn(),
         chain: vi.fn().mockReturnValue({
-          on: vi.fn(),
+          on: vi.fn().mockReturnThis(),
+          destroy: vi.fn(),
+          restart: vi.fn(),
         }),
       },
       time: {
