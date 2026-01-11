@@ -1,4 +1,5 @@
 export { Enemy, type EnemyConfig } from './Enemy';
+export { Projectile } from './Projectile';
 export {
   BasicEnemy,
   TankEnemy,

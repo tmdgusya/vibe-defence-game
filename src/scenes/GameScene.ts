@@ -8,6 +8,7 @@ import {
 import { Tower } from '../entities/Tower';
 import { TowerSystem } from '../systems/TowerSystem';
 import { EnemySystem } from '../systems/EnemySystem';
+import { ProjectileSystem } from '../systems/ProjectileSystem';
 
 /**
  * Main Game Scene
@@ -17,6 +18,7 @@ export default class GameScene extends Phaser.Scene {
   private gridCells: Phaser.GameObjects.Image[][] = [];
   private towerSystem: TowerSystem;
   private enemySystem: EnemySystem;
+  private projectileSystem: ProjectileSystem;
   private selectedTowerType: TowerType | null = null;
   private currentGold: number = 200;
   private currentWave: number = 1;
@@ -30,6 +32,7 @@ export default class GameScene extends Phaser.Scene {
     super({ key: 'GameScene' });
     this.towerSystem = new TowerSystem(this);
     this.enemySystem = new EnemySystem(this);
+    this.projectileSystem = new ProjectileSystem(this);
   }
 
   create(): void {
@@ -110,6 +113,7 @@ export default class GameScene extends Phaser.Scene {
   update(time: number, delta: number): void {
     if (!this.isPaused) {
       this.enemySystem.update(time, delta);
+      this.projectileSystem.update(time, delta);
     }
   }
 
@@ -458,5 +462,33 @@ export default class GameScene extends Phaser.Scene {
    */
   public getTowerSystem(): TowerSystem {
     return this.towerSystem;
+  }
+
+  /**
+   * Returns the ProjectileSystem instance
+   */
+  public getProjectileSystem(): ProjectileSystem {
+    return this.projectileSystem;
+  }
+
+  /**
+   * Returns all placed towers on the grid
+   */
+  public getPlacedTowers(): Tower[] {
+    const towers: Tower[] = [];
+
+    for (let row = 0; row < GRID_CONFIG.ROWS; row++) {
+      for (let col = 0; col < GRID_CONFIG.COLS; col++) {
+        const cell = this.gridCells[row][col];
+        if (cell.getData('occupied')) {
+          const tower = cell.getData('tower') as Tower;
+          if (tower) {
+            towers.push(tower);
+          }
+        }
+      }
+    }
+
+    return towers;
   }
 }

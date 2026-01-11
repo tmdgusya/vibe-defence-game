@@ -74,6 +74,12 @@ export interface EnemyData {
   armor: number;
 }
 
+// Projectile data
+export interface ProjectileData {
+  damage: number;
+  speed: number; // pixels per second
+}
+
 // Grid cell
 export interface GridCell {
   x: number;
@@ -107,7 +113,9 @@ export type GameEventType =
   | 'towerDragStart'
   | 'towerDragEnd'
   | 'towerDrop'
-  | 'towerDragOver';
+  | 'towerDragOver'
+  | 'projectileFired'
+  | 'projectileHit';
 
 // Placement failure reasons
 export type PlacementFailureReason =
@@ -165,4 +173,8 @@ export interface GameEvents {
   towerDragEnd: { success: boolean };
   towerDrop: { towerType: TowerType; gridX: number; gridY: number };
   towerDragOver: { gridX: number; gridY: number };
+
+  // Projectile events
+  projectileFired: { tower: TowerData; damage: number };
+  projectileHit: { enemy: EnemyData; damage: number };
 }
