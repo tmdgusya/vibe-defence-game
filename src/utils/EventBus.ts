@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { TowerType } from '../types';
 
 /**
  * EventBus - Communication bridge between React and Phaser
@@ -13,6 +14,17 @@ export const EventBus = new Phaser.Events.EventEmitter();
  */
 export interface EventData {
   sceneReady: { scene: string };
+  selectTower: {
+    type: TowerType | null;
+  };
+  placementFailed: {
+    reason:
+      | 'insufficient_gold'
+      | 'cell_occupied'
+      | 'out_of_bounds'
+      | 'no_tower_selected';
+    message: string;
+  };
   towerPlaced: {
     tower: {
       type: string;

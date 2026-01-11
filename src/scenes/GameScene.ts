@@ -11,6 +11,8 @@ import { TowerSystem } from '../systems/TowerSystem';
 export default class GameScene extends Phaser.Scene {
   private gridCells: Phaser.GameObjects.Image[][] = [];
   private towerSystem: TowerSystem;
+  private selectedTowerType: TowerType | null = null;
+  private currentGold: number = 200;
 
   constructor() {
     super({ key: 'GameScene' });
@@ -22,6 +24,7 @@ export default class GameScene extends Phaser.Scene {
 
     this.createGrid();
     this.setupInput();
+    this.setupEventListeners();
 
     EventBus.emit('sceneReady', { scene: 'GameScene' });
 
@@ -29,6 +32,30 @@ export default class GameScene extends Phaser.Scene {
     console.log(
       `Grid: ${GRID_CONFIG.COLS}x${GRID_CONFIG.ROWS} (${GRID_CONFIG.WIDTH}x${GRID_CONFIG.HEIGHT}px)`
     );
+  }
+
+  private setupEventListeners(): void {
+    EventBus.on('selectTower', (data: { type: TowerType | null }) => {
+      this.selectedTowerType = data.type;
+      this.updateGridHighlighting();
+    });
+
+    EventBus.on('goldChanged', (data: { gold: number }) => {
+      this.currentGold = data.gold;
+    });
+  }
+
+  private updateGridHighlighting(): void {
+    for (let row = 0; row < GRID_CONFIG.ROWS; row++) {
+      for (let col = 0; col < GRID_CONFIG.COLS; col++) {
+        const cell = this.gridCells[row][col];
+        if (this.selectedTowerType && !cell.getData('occupied')) {
+          cell.setAlpha(1.0);
+        } else {
+          cell.setAlpha(0.8);
+        }
+      }
+    }
   }
 
   update(_time: number, _delta: number): void {
@@ -100,24 +127,57 @@ export default class GameScene extends Phaser.Scene {
 
     console.log(`Cell clicked: (${gridX}, ${gridY}), occupied: ${isOccupied}`);
 
-    if (!isOccupied) {
-      this.placeTower(gridX, gridY);
-    }
-  }
-
-  /**
-   * Places a placeholder tower for demonstration
-   */
-  private placeTower(gridX: number, gridY: number): void {
-    const validation = this.towerSystem.validatePlacement(gridX, gridY);
-
-    if (!validation.valid) {
-      console.log(`Invalid tower placement: ${validation.reason}`);
+    if (isOccupied) {
       return;
     }
 
+    if (!this.selectedTowerType) {
+      EventBus.emit('placementFailed', {
+        reason: 'no_tower_selected',
+        message: 'Select a tower first!',
+      });
+      return;
+    }
+
+    const cost = this.towerSystem.getTowerCost(
+      this.selectedTowerType,
+      TowerLevel.BASIC
+    );
+
+    if (this.currentGold < cost) {
+      EventBus.emit('placementFailed', {
+        reason: 'insufficient_gold',
+        message: `Not enough gold! Need ${cost}g`,
+      });
+      this.showErrorFlash(gridX, gridY);
+      return;
+    }
+
+    this.placeTower(gridX, gridY, this.selectedTowerType);
+  }
+
+  /**
+   * Places a tower at the specified grid position
+   */
+  private placeTower(
+    gridX: number,
+    gridY: number,
+    towerType: TowerType
+  ): void {
+    const validation = this.towerSystem.validatePlacement(gridX, gridY);
+
+    if (!validation.valid) {
+      EventBus.emit('placementFailed', {
+        reason: 'cell_occupied',
+        message: validation.reason!,
+      });
+      return;
+    }
+
+    const cost = this.towerSystem.getTowerCost(towerType, TowerLevel.BASIC);
+
     const towerData = this.towerSystem.createTowerData(
-      TowerType.PEASHOOTER,
+      towerType,
       TowerLevel.BASIC,
       gridX,
       gridY
@@ -130,8 +190,47 @@ export default class GameScene extends Phaser.Scene {
     cell.setData('tower', tower);
 
     EventBus.emit('towerPlaced', { tower: towerData });
+    EventBus.emit('goldChanged', {
+      gold: this.currentGold - cost,
+      change: -cost,
+    });
+
+    this.showSuccessFlash(gridX, gridY);
 
     console.log(`Tower placed at (${gridX}, ${gridY})`);
+  }
+
+  private showSuccessFlash(gridX: number, gridY: number): void {
+    const cell = this.gridCells[gridY][gridX];
+    cell.setTint(0x00ff00);
+    this.tweens.add({
+      targets: cell,
+      alpha: { from: 0.5, to: 1 },
+      duration: 200,
+      yoyo: true,
+      repeat: 1,
+      onComplete: () => {
+        cell.clearTint();
+      },
+    });
+  }
+
+  private showErrorFlash(gridX: number, gridY: number): void {
+    const cell = this.gridCells[gridY][gridX];
+    const originalX = cell.x;
+    cell.setTint(0xff0000);
+    this.tweens.add({
+      targets: cell,
+      x: originalX + 5,
+      duration: 50,
+      yoyo: true,
+      repeat: 3,
+      onComplete: () => {
+        cell.setTint(0x000000);
+        cell.clearTint();
+        cell.x = originalX;
+      },
+    });
   }
 
   /**

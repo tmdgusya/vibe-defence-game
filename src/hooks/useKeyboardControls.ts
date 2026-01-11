@@ -10,7 +10,7 @@ export const useKeyboardControls = () => {
         case 'p':
         case ' ':
           event.preventDefault();
-          setPaused((prev) => !prev);
+          setPaused(!useGameStore.getState().isPaused);
           break;
         case 'escape':
           event.preventDefault();

@@ -7,7 +7,13 @@ import {
 } from 'react';
 import Phaser from 'phaser';
 import phaserConfig from '../config/PhaserConfig';
-import { EventBus, subscribeToEvent, unsubscribeFromEvent } from '../utils/EventBus';
+import {
+  EventBus,
+  subscribeToEvent,
+  unsubscribeFromEvent,
+  EventData,
+} from '../utils/EventBus';
+import { useGameStore } from '../store/gameStore';
 
 /**
  * Ref type exposed by PhaserGame component
@@ -62,20 +68,25 @@ const PhaserGame = forwardRef<PhaserGameRef>(function PhaserGame(_props, ref) {
       console.log(`Scene ready: ${data.scene}`);
     };
 
-    const handleTowerPlaced = (data: {
-      tower: { type: string; gridX: number; gridY: number };
-    }): void => {
+    const handleTowerPlaced = (data: EventData['towerPlaced']): void => {
       console.log(
         `Tower placed: ${data.tower.type} at (${data.tower.gridX}, ${data.tower.gridY})`
       );
+      useGameStore.getState().incrementTowersPlaced();
+    };
+
+    const handleGoldChanged = (data: EventData['goldChanged']): void => {
+      useGameStore.getState().setGold(data.gold);
     };
 
     subscribeToEvent('sceneReady', handleSceneReady);
     subscribeToEvent('towerPlaced', handleTowerPlaced);
+    subscribeToEvent('goldChanged', handleGoldChanged);
 
     return (): void => {
       unsubscribeFromEvent('sceneReady', handleSceneReady);
       unsubscribeFromEvent('towerPlaced', handleTowerPlaced);
+      unsubscribeFromEvent('goldChanged', handleGoldChanged);
     };
   }, []);
 

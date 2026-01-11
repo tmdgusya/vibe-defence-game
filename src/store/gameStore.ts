@@ -1,4 +1,6 @@
 import { create } from 'zustand';
+import { TowerType } from '../types';
+import { EventBus } from '../utils/EventBus';
 
 interface GameState {
   score: number;
@@ -10,6 +12,8 @@ interface GameState {
   wave: number;
   enemiesKilled: number;
   towersPlaced: number;
+  gold: number;
+  selectedTowerType: TowerType | null;
 }
 
 interface GameActions {
@@ -23,6 +27,9 @@ interface GameActions {
   incrementEnemiesKilled: () => void;
   incrementTowersPlaced: () => void;
   resetGame: () => void;
+  setGold: (gold: number) => void;
+  spendGold: (amount: number) => boolean;
+  selectTowerType: (type: TowerType | null) => void;
 }
 
 const initialState: GameState = {
@@ -35,6 +42,8 @@ const initialState: GameState = {
   wave: 1,
   enemiesKilled: 0,
   towersPlaced: 0,
+  gold: 200,
+  selectedTowerType: null,
 };
 
 export const useGameStore = create<GameState & GameActions>((set) => ({
@@ -56,4 +65,20 @@ export const useGameStore = create<GameState & GameActions>((set) => ({
       towersPlaced: state.towersPlaced + 1,
     })),
   resetGame: () => set(initialState),
+  setGold: (gold) => set({ gold }),
+  spendGold: (amount) => {
+    let success = false;
+    set((state) => {
+      if (state.gold >= amount) {
+        success = true;
+        return { gold: state.gold - amount };
+      }
+      return {};
+    });
+    return success;
+  },
+  selectTowerType: (type) => {
+    set({ selectedTowerType: type });
+    EventBus.emit('selectTower', { type });
+  },
 }));
