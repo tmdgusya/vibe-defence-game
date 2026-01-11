@@ -4,7 +4,7 @@ import GameScene from '../scenes/GameScene';
 import { TowerType, TowerLevel } from '../types';
 
 vi.mock('../scenes/GameScene', () => ({
-  GameScene: vi.fn().mockImplementation(() => ({
+  default: vi.fn().mockImplementation(() => ({
     isCellAvailable: vi.fn((x, y) => x >= 0 && x < 9 && y >= 0 && y < 5),
   })),
 }));
