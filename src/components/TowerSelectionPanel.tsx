@@ -4,7 +4,7 @@ import { useGameStore } from '../store/gameStore';
 import {
   subscribeToEvent,
   unsubscribeFromEvent,
-  EventData,
+  type GameEvents,
 } from '../utils/EventBus';
 
 interface TowerOption {
@@ -44,7 +44,7 @@ const TowerSelectionPanel: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    const handlePlacementFailed = (data: EventData['placementFailed']) => {
+    const handlePlacementFailed = (data: GameEvents['placementFailed']) => {
       setErrorMessage(data.message);
       setTimeout(() => setErrorMessage(null), 2000);
     };

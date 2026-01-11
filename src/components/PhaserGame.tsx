@@ -11,7 +11,7 @@ import {
   EventBus,
   subscribeToEvent,
   unsubscribeFromEvent,
-  EventData,
+  type GameEvents,
 } from '../utils/EventBus';
 import { useGameStore } from '../store/gameStore';
 
@@ -62,31 +62,62 @@ const PhaserGame = forwardRef<PhaserGameRef>(function PhaserGame(_props, ref) {
     };
   }, []);
 
-  // Subscribe to game events
+  // Subscribe to game events from Phaser
   useEffect(() => {
-    const handleSceneReady = (data: { scene: string }): void => {
+    // Scene lifecycle
+    const handleSceneReady = (data: GameEvents['sceneReady']): void => {
       console.log(`Scene ready: ${data.scene}`);
     };
 
-    const handleTowerPlaced = (data: EventData['towerPlaced']): void => {
+    // Tower events
+    const handleTowerPlaced = (data: GameEvents['towerPlaced']): void => {
       console.log(
         `Tower placed: ${data.tower.type} at (${data.tower.gridX}, ${data.tower.gridY})`
       );
       useGameStore.getState().incrementTowersPlaced();
     };
 
-    const handleGoldChanged = (data: EventData['goldChanged']): void => {
+    // Resource events
+    const handleGoldChanged = (data: GameEvents['goldChanged']): void => {
       useGameStore.getState().setGold(data.gold);
     };
 
+    const handleLivesChanged = (data: GameEvents['livesChanged']): void => {
+      useGameStore.getState().setLives(data.lives);
+    };
+
+    // Game state events
+    const handleGamePaused = (): void => {
+      useGameStore.getState().setPaused(true);
+    };
+
+    const handleGameResumed = (): void => {
+      useGameStore.getState().setPaused(false);
+    };
+
+    const handleGameOver = (data: GameEvents['gameOver']): void => {
+      console.log(`Game over! Won: ${data.won}, Score: ${data.score}`);
+      useGameStore.getState().setGameOver(true);
+      useGameStore.getState().setScore(data.score);
+    };
+
+    // Subscribe to all events
     subscribeToEvent('sceneReady', handleSceneReady);
     subscribeToEvent('towerPlaced', handleTowerPlaced);
     subscribeToEvent('goldChanged', handleGoldChanged);
+    subscribeToEvent('livesChanged', handleLivesChanged);
+    subscribeToEvent('gamePaused', handleGamePaused);
+    subscribeToEvent('gameResumed', handleGameResumed);
+    subscribeToEvent('gameOver', handleGameOver);
 
     return (): void => {
       unsubscribeFromEvent('sceneReady', handleSceneReady);
       unsubscribeFromEvent('towerPlaced', handleTowerPlaced);
       unsubscribeFromEvent('goldChanged', handleGoldChanged);
+      unsubscribeFromEvent('livesChanged', handleLivesChanged);
+      unsubscribeFromEvent('gamePaused', handleGamePaused);
+      unsubscribeFromEvent('gameResumed', handleGameResumed);
+      unsubscribeFromEvent('gameOver', handleGameOver);
     };
   }, []);
 

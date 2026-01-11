@@ -82,34 +82,52 @@ export interface GridCell {
   tower: TowerData | null;
 }
 
-// Event types for EventBus
-export type GameEventType =
-  | 'towerPlaced'
-  | 'towerMerged'
-  | 'towerSold'
-  | 'enemySpawned'
-  | 'enemyKilled'
-  | 'enemyReachedEnd'
-  | 'waveStarted'
-  | 'waveCompleted'
-  | 'goldChanged'
-  | 'livesChanged'
-  | 'gameOver'
-  | 'gamePaused'
-  | 'gameResumed';
+// Event types for EventBus (derived from GameEvents keys)
+export type GameEventType = keyof GameEvents;
 
-// Event payload types
+// Placement failure reasons
+export type PlacementFailureReason =
+  | 'insufficient_gold'
+  | 'cell_occupied'
+  | 'out_of_bounds'
+  | 'no_tower_selected';
+
+/**
+ * EventBus Event Payload Types
+ *
+ * Centralized event definitions for React-Phaser communication.
+ * All event payloads are defined here to ensure type safety across
+ * both the React UI layer and the Phaser game engine.
+ */
 export interface GameEvents {
+  // Scene lifecycle events
+  sceneReady: { scene: string };
+
+  // Tower selection (UI → Game)
+  selectTower: { type: TowerType | null };
+
+  // Placement feedback (Game → UI)
+  placementFailed: { reason: PlacementFailureReason; message: string };
+
+  // Tower events
   towerPlaced: { tower: TowerData };
   towerMerged: { result: TowerData; consumed: TowerData[] };
   towerSold: { tower: TowerData; refund: number };
+
+  // Enemy events
   enemySpawned: { enemy: EnemyData };
   enemyKilled: { enemy: EnemyData; reward: number };
   enemyReachedEnd: { enemy: EnemyData; damage: number };
+
+  // Wave events
   waveStarted: { wave: number };
   waveCompleted: { wave: number; bonus: number };
+
+  // Resource events
   goldChanged: { gold: number; change: number };
   livesChanged: { lives: number; change: number };
+
+  // Game state events
   gameOver: { won: boolean; score: number };
   gamePaused: Record<string, never>;
   gameResumed: Record<string, never>;

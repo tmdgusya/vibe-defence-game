@@ -1,6 +1,10 @@
 import Phaser from 'phaser';
 import { GRID_CONFIG, TowerType, TowerLevel } from '../types';
-import { EventBus } from '../utils/EventBus';
+import {
+  emitEvent,
+  subscribeToEvent,
+  type GameEvents,
+} from '../utils/EventBus';
 import { Tower } from '../entities/Tower';
 import { TowerSystem } from '../systems/TowerSystem';
 
@@ -13,6 +17,7 @@ export default class GameScene extends Phaser.Scene {
   private towerSystem: TowerSystem;
   private selectedTowerType: TowerType | null = null;
   private currentGold: number = 200;
+  private isPaused: boolean = false;
 
   constructor() {
     super({ key: 'GameScene' });
@@ -26,7 +31,7 @@ export default class GameScene extends Phaser.Scene {
     this.setupInput();
     this.setupEventListeners();
 
-    EventBus.emit('sceneReady', { scene: 'GameScene' });
+    emitEvent('sceneReady', { scene: 'GameScene' });
 
     console.log('GameScene: Game world created successfully');
     console.log(
@@ -35,13 +40,24 @@ export default class GameScene extends Phaser.Scene {
   }
 
   private setupEventListeners(): void {
-    EventBus.on('selectTower', (data: { type: TowerType | null }) => {
+    subscribeToEvent('selectTower', (data: GameEvents['selectTower']) => {
       this.selectedTowerType = data.type;
       this.updateGridHighlighting();
     });
 
-    EventBus.on('goldChanged', (data: { gold: number }) => {
+    subscribeToEvent('goldChanged', (data: GameEvents['goldChanged']) => {
       this.currentGold = data.gold;
+    });
+
+    // Listen for pause/resume from React UI
+    subscribeToEvent('gamePaused', () => {
+      this.isPaused = true;
+      this.scene.pause();
+    });
+
+    subscribeToEvent('gameResumed', () => {
+      this.isPaused = false;
+      this.scene.resume();
     });
   }
 
@@ -110,12 +126,27 @@ export default class GameScene extends Phaser.Scene {
   private setupInput(): void {
     // Keyboard shortcuts
     this.input.keyboard?.on('keydown-ESC', () => {
-      EventBus.emit('gamePaused', {});
+      this.togglePause();
+    });
+
+    this.input.keyboard?.on('keydown-P', () => {
+      this.togglePause();
     });
 
     this.input.keyboard?.on('keydown-SPACE', () => {
       console.log('Space pressed - Wave start (not implemented yet)');
     });
+  }
+
+  /**
+   * Toggles the game pause state
+   */
+  private togglePause(): void {
+    if (this.isPaused) {
+      emitEvent('gameResumed', {});
+    } else {
+      emitEvent('gamePaused', {});
+    }
   }
 
   /**
@@ -132,7 +163,7 @@ export default class GameScene extends Phaser.Scene {
     }
 
     if (!this.selectedTowerType) {
-      EventBus.emit('placementFailed', {
+      emitEvent('placementFailed', {
         reason: 'no_tower_selected',
         message: 'Select a tower first!',
       });
@@ -145,7 +176,7 @@ export default class GameScene extends Phaser.Scene {
     );
 
     if (this.currentGold < cost) {
-      EventBus.emit('placementFailed', {
+      emitEvent('placementFailed', {
         reason: 'insufficient_gold',
         message: `Not enough gold! Need ${cost}g`,
       });
@@ -167,7 +198,7 @@ export default class GameScene extends Phaser.Scene {
     const validation = this.towerSystem.validatePlacement(gridX, gridY);
 
     if (!validation.valid) {
-      EventBus.emit('placementFailed', {
+      emitEvent('placementFailed', {
         reason: 'cell_occupied',
         message: validation.reason!,
       });
@@ -189,8 +220,8 @@ export default class GameScene extends Phaser.Scene {
     cell.setData('occupied', true);
     cell.setData('tower', tower);
 
-    EventBus.emit('towerPlaced', { tower: towerData });
-    EventBus.emit('goldChanged', {
+    emitEvent('towerPlaced', { tower: towerData });
+    emitEvent('goldChanged', {
       gold: this.currentGold - cost,
       change: -cost,
     });
