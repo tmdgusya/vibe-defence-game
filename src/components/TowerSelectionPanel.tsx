@@ -4,6 +4,7 @@ import { useGameStore } from '../store/gameStore';
 import {
   subscribeToEvent,
   unsubscribeFromEvent,
+  emitEvent,
   type GameEvents,
 } from '../utils/EventBus';
 
@@ -46,7 +47,7 @@ const TowerSelectionPanel: React.FC = () => {
   useEffect(() => {
     const handlePlacementFailed = (data: GameEvents['placementFailed']) => {
       setErrorMessage(data.message);
-      setTimeout(() => setErrorMessage(null), 2000);
+      window.setTimeout(() => setErrorMessage(null), 2000);
     };
 
     subscribeToEvent('placementFailed', handlePlacementFailed);
@@ -62,6 +63,20 @@ const TowerSelectionPanel: React.FC = () => {
     } else {
       selectTowerType(type);
     }
+  };
+
+  const handleDragStart = (e: React.DragEvent, type: TowerType) => {
+    e.dataTransfer.effectAllowed = 'copy';
+    e.dataTransfer.setData(
+      'application/json',
+      JSON.stringify({ towerType: type })
+    );
+
+    emitEvent('towerDragStart', { towerType: type });
+  };
+
+  const handleDragEnd = () => {
+    emitEvent('towerDragEnd', { success: false });
   };
 
   const canAfford = (cost: number) => gold >= cost;
@@ -88,6 +103,9 @@ const TowerSelectionPanel: React.FC = () => {
             <button
               key={tower.type}
               onClick={() => handleSelectTower(tower.type)}
+              onDragStart={(e) => handleDragStart(e, tower.type)}
+              onDragEnd={handleDragEnd}
+              draggable={affordable}
               disabled={!affordable}
               className={`
                 p-3 rounded-lg transition-all flex items-center gap-3
@@ -112,8 +130,8 @@ const TowerSelectionPanel: React.FC = () => {
 
       <div className="mt-4 text-gray-400 text-xs">
         {selectedTowerType
-          ? 'Click on grid to place'
-          : 'Select a tower to place'}
+          ? 'Click on grid or drag tower to place'
+          : 'Click to select or drag tower to place'}
       </div>
     </div>
   );

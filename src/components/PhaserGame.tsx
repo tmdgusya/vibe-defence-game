@@ -1,4 +1,4 @@
-import {
+import React, {
   forwardRef,
   useEffect,
   useImperativeHandle,
@@ -11,9 +11,11 @@ import {
   EventBus,
   subscribeToEvent,
   unsubscribeFromEvent,
+  emitEvent,
   type GameEvents,
 } from '../utils/EventBus';
 import { useGameStore } from '../store/gameStore';
+import { GRID_CONFIG } from '../types';
 
 /**
  * Ref type exposed by PhaserGame component
@@ -121,10 +123,57 @@ const PhaserGame = forwardRef<PhaserGameRef>(function PhaserGame(_props, ref) {
     };
   }, []);
 
+  const screenToGrid = (clientX: number, clientY: number, rect: DOMRect) => {
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+    return {
+      x: Math.floor(x / GRID_CONFIG.CELL_SIZE),
+      y: Math.floor(y / GRID_CONFIG.CELL_SIZE),
+    };
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+
+    if (!containerRef.current) return;
+
+    const rect = containerRef.current.getBoundingClientRect();
+    const gridPos = screenToGrid(e.clientX, e.clientY, rect);
+
+    emitEvent('towerDragOver', { gridX: gridPos.x, gridY: gridPos.y });
+  };
+
+  const handleDragLeave = () => {
+    emitEvent('towerDragOver', { gridX: -1, gridY: -1 });
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+
+    const data = JSON.parse(e.dataTransfer.getData('application/json')) as {
+      towerType: string;
+    };
+
+    if (!containerRef.current) return;
+
+    const rect = containerRef.current.getBoundingClientRect();
+    const gridPos = screenToGrid(e.clientX, e.clientY, rect);
+
+    emitEvent('towerDrop', {
+      towerType: data.towerType as any,
+      gridX: gridPos.x,
+      gridY: gridPos.y,
+    });
+  };
+
   return (
     <div
       id="phaser-container"
       ref={containerRef}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
       style={{
         width: phaserConfig.width as number,
         height: phaserConfig.height as number,

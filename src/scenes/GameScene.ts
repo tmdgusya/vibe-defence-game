@@ -18,6 +18,10 @@ export default class GameScene extends Phaser.Scene {
   private selectedTowerType: TowerType | null = null;
   private currentGold: number = 200;
   private isPaused: boolean = false;
+  private draggedTowerType: TowerType | null = null;
+  private ghostTower: Phaser.GameObjects.Sprite | null = null;
+  private rangeIndicator: Phaser.GameObjects.Graphics | null = null;
+  private previewCell: Phaser.GameObjects.Rectangle | null = null;
 
   constructor() {
     super({ key: 'GameScene' });
@@ -47,6 +51,26 @@ export default class GameScene extends Phaser.Scene {
 
     subscribeToEvent('goldChanged', (data: GameEvents['goldChanged']) => {
       this.currentGold = data.gold;
+    });
+
+    subscribeToEvent('towerDragStart', (data: GameEvents['towerDragStart']) => {
+      this.draggedTowerType = data.towerType;
+      this.createDragPreview(data.towerType);
+    });
+
+    subscribeToEvent('towerDragEnd', () => {
+      this.cleanupDragPreview();
+      this.draggedTowerType = null;
+    });
+
+    subscribeToEvent('towerDrop', (data: GameEvents['towerDrop']) => {
+      this.placeTower(data.gridX, data.gridY, data.towerType);
+      this.cleanupDragPreview();
+      this.draggedTowerType = null;
+    });
+
+    subscribeToEvent('towerDragOver', (data: GameEvents['towerDragOver']) => {
+      this.updateDragPreview(data.gridX, data.gridY);
     });
 
     // Listen for pause/resume from React UI
@@ -126,7 +150,13 @@ export default class GameScene extends Phaser.Scene {
   private setupInput(): void {
     // Keyboard shortcuts
     this.input.keyboard?.on('keydown-ESC', () => {
-      this.togglePause();
+      if (this.draggedTowerType) {
+        emitEvent('towerDragEnd', { success: false });
+        this.cleanupDragPreview();
+        this.draggedTowerType = null;
+      } else {
+        this.togglePause();
+      }
     });
 
     this.input.keyboard?.on('keydown-P', () => {
@@ -135,6 +165,14 @@ export default class GameScene extends Phaser.Scene {
 
     this.input.keyboard?.on('keydown-SPACE', () => {
       console.log('Space pressed - Wave start (not implemented yet)');
+    });
+
+    this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+      if (this.draggedTowerType && pointer.rightButtonDown()) {
+        emitEvent('towerDragEnd', { success: false });
+        this.cleanupDragPreview();
+        this.draggedTowerType = null;
+      }
     });
   }
 
@@ -190,11 +228,7 @@ export default class GameScene extends Phaser.Scene {
   /**
    * Places a tower at the specified grid position
    */
-  private placeTower(
-    gridX: number,
-    gridY: number,
-    towerType: TowerType
-  ): void {
+  private placeTower(gridX: number, gridY: number, towerType: TowerType): void {
     const validation = this.towerSystem.validatePlacement(gridX, gridY);
 
     if (!validation.valid) {
@@ -288,5 +322,114 @@ export default class GameScene extends Phaser.Scene {
   public isCellAvailable(gridX: number, gridY: number): boolean {
     const cell = this.getCell(gridX, gridY);
     return cell !== null && !cell.getData('occupied');
+  }
+
+  /**
+   * Creates drag preview elements
+   */
+  private createDragPreview(type: TowerType): void {
+    const textureKey = `tower-${type}`;
+
+    this.ghostTower = this.add.sprite(0, 0, textureKey);
+    this.ghostTower.setAlpha(0.5);
+    this.ghostTower.setDepth(1000);
+
+    this.rangeIndicator = this.add.graphics();
+    this.rangeIndicator.setDepth(999);
+    this.updateRangeIndicator(type);
+
+    this.previewCell = this.add.rectangle(0, 0, 80, 80, 0xffffff, 0);
+    this.previewCell.setStrokeStyle(3, 0xffffff, 0.5);
+    this.previewCell.setDepth(998);
+
+    this.input.on('pointermove', this.onPointerMove, this);
+  }
+
+  /**
+   * Handles pointer movement during drag
+   */
+  private onPointerMove(pointer: Phaser.Input.Pointer): void {
+    if (!this.draggedTowerType) return;
+
+    const gridX = Math.floor(pointer.x / GRID_CONFIG.CELL_SIZE);
+    const gridY = Math.floor(pointer.y / GRID_CONFIG.CELL_SIZE);
+
+    this.updateDragPreview(gridX, gridY);
+  }
+
+  /**
+   * Updates drag preview position and appearance
+   */
+  private updateDragPreview(gridX: number, gridY: number): void {
+    if (!this.ghostTower || !this.previewCell || !this.rangeIndicator) return;
+
+    const x = gridX * GRID_CONFIG.CELL_SIZE + GRID_CONFIG.CELL_SIZE / 2;
+    const y = gridY * GRID_CONFIG.CELL_SIZE + GRID_CONFIG.CELL_SIZE / 2;
+
+    this.ghostTower.setPosition(x, y);
+    this.rangeIndicator.setPosition(x, y);
+    this.previewCell.setPosition(x, y);
+
+    if (
+      gridX < 0 ||
+      gridX >= GRID_CONFIG.COLS ||
+      gridY < 0 ||
+      gridY >= GRID_CONFIG.ROWS
+    ) {
+      this.previewCell.setStrokeStyle(3, 0xff0000, 0.8);
+      this.previewCell.setFillStyle(0xff0000, 0.2);
+      return;
+    }
+
+    const validation = this.towerSystem.validatePlacement(gridX, gridY);
+    const cost = this.towerSystem.getTowerCost(
+      this.draggedTowerType!,
+      TowerLevel.BASIC
+    );
+    const canAfford = this.currentGold >= cost;
+
+    if (validation.valid && canAfford) {
+      this.previewCell.setStrokeStyle(3, 0x00ff00, 0.8);
+      this.previewCell.setFillStyle(0x00ff00, 0.2);
+    } else {
+      this.previewCell.setStrokeStyle(3, 0xff0000, 0.8);
+      this.previewCell.setFillStyle(0xff0000, 0.2);
+    }
+  }
+
+  /**
+   * Updates range indicator for tower type
+   */
+  private updateRangeIndicator(type: TowerType): void {
+    if (!this.rangeIndicator) return;
+
+    const stats = this.towerSystem.getTowerStats(type, TowerLevel.BASIC);
+    const rangePixels = stats.range * GRID_CONFIG.CELL_SIZE;
+
+    this.rangeIndicator.clear();
+    this.rangeIndicator.lineStyle(2, 0x4a90d9, 0.3);
+    this.rangeIndicator.strokeCircle(0, 0, rangePixels);
+    this.rangeIndicator.fillStyle(0x4a90d9, 0.1);
+    this.rangeIndicator.fillCircle(0, 0, rangePixels);
+  }
+
+  /**
+   * Cleans up drag preview elements
+   */
+  private cleanupDragPreview(): void {
+    this.input.off('pointermove', this.onPointerMove);
+
+    if (this.ghostTower) {
+      this.ghostTower.destroy();
+      this.ghostTower = null;
+    }
+    if (this.rangeIndicator) {
+      this.rangeIndicator.destroy();
+      this.rangeIndicator = null;
+    }
+    if (this.previewCell) {
+      this.previewCell.destroy();
+      this.previewCell = null;
+    }
   }
 }

@@ -103,7 +103,11 @@ export type GameEventType =
   | 'livesChanged'
   | 'gameOver'
   | 'gamePaused'
-  | 'gameResumed';
+  | 'gameResumed'
+  | 'towerDragStart'
+  | 'towerDragEnd'
+  | 'towerDrop'
+  | 'towerDragOver';
 
 // Placement failure reasons
 export type PlacementFailureReason =
@@ -155,4 +159,10 @@ export interface GameEvents {
   gameOver: { won: boolean; score: number };
   gamePaused: Record<string, never>;
   gameResumed: Record<string, never>;
+
+  // Drag and drop events
+  towerDragStart: { towerType: TowerType };
+  towerDragEnd: { success: boolean };
+  towerDrop: { towerType: TowerType; gridX: number; gridY: number };
+  towerDragOver: { gridX: number; gridY: number };
 }
