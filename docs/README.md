@@ -14,6 +14,7 @@ Welcome to the Defense Game Project documentation. This document serves as the c
 Product Requirements Documents defining features and functionality.
 
 #### Latest PRDs
+- [PRD-LEVEL-ECONOMY-SYSTEM-2025-01-11.md](./prd/PRD-LEVEL-ECONOMY-SYSTEM-2025-01-11.md) - Level progression and economy system
 - [PRD-TOWER-DEFENSE-CORE-2024-01-15.md](./prd/PRD-TOWER-DEFENSE-CORE-2024-01-15.md) - Core tower defense mechanics
 - [PRD-ENEMY-SYSTEM-2024-01-20.md](./prd/PRD-ENEMY-SYSTEM-2024-01-20.md) - Enemy wave and AI system
 
@@ -21,6 +22,7 @@ Product Requirements Documents defining features and functionality.
 Technical documentation for system architecture and implementation details.
 
 #### Key Specs
+- [SPEC-GAME-LEVEL-ECONOMY-v1.0.md](./specs/SPEC-GAME-LEVEL-ECONOMY-v1.0.md) - Level and economy engine architecture
 - [SPEC-GAME-ENGINE-v1.0.md](./specs/SPEC-GAME-ENGINE-v1.0.md) - Game engine architecture
 - [SPEC-NETWORKING-v2.1.md](./specs/SPEC-NETWORKING-v2.1.md) - Multiplayer networking
 
@@ -28,6 +30,7 @@ Technical documentation for system architecture and implementation details.
 Strategic planning and market analysis documents.
 
 #### Strategic Documents
+- [STRATEGY-GAME-BALANCE-ENGAGEMENT-2025-01-11.md](./strategy/STRATEGY-GAME-BALANCE-ENGAGEMENT-2025-01-11.md) - Game balance and player engagement strategy
 - [STRATEGY-MARKET-POSITIONING-2024-01-15.md](./strategy/STRATEGY-MARKET-POSITIONING-2024-01-15.md)
 - [STRATEGY-MONETIZATION-2024-02-01.md](./strategy/STRATEGY-MONETIZATION-2024-02-01.md)
 
