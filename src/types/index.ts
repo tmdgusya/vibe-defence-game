@@ -82,8 +82,25 @@ export interface GridCell {
   tower: TowerData | null;
 }
 
-// Event types for EventBus (derived from GameEvents keys)
-export type GameEventType = keyof GameEvents;
+// Event types for EventBus
+export type GameEventType =
+  | 'towerPlaced'
+  | 'towerMerged'
+  | 'towerSold'
+  | 'towerSelected'
+  | 'towerDeselected'
+  | 'towerUpgrade'
+  | 'mergeAvailable'
+  | 'enemySpawned'
+  | 'enemyKilled'
+  | 'enemyReachedEnd'
+  | 'waveStarted'
+  | 'waveCompleted'
+  | 'goldChanged'
+  | 'livesChanged'
+  | 'gameOver'
+  | 'gamePaused'
+  | 'gameResumed';
 
 // Placement failure reasons
 export type PlacementFailureReason =
@@ -113,6 +130,10 @@ export interface GameEvents {
   towerPlaced: { tower: TowerData };
   towerMerged: { result: TowerData; consumed: TowerData[] };
   towerSold: { tower: TowerData; refund: number };
+  towerSelected: { tower: TowerData };
+  towerDeselected: Record<string, never>;
+  towerUpgrade: { tower: TowerData; cost: number };
+  mergeAvailable: { available: boolean };
 
   // Enemy events
   enemySpawned: { enemy: EnemyData };
