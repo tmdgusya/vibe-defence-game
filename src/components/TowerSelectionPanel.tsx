@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { TowerType } from '../types';
 import { useGameStore } from '../store/gameStore';
 import {
@@ -41,7 +42,14 @@ const TOWER_OPTIONS: TowerOption[] = [
 ];
 
 const TowerSelectionPanel: React.FC = () => {
-  const { gold, selectedTowerType, selectTowerType } = useGameStore();
+  // Use shallow comparison to prevent unnecessary re-renders
+  const { gold, selectedTowerType, selectTowerType } = useGameStore(
+    useShallow((state) => ({
+      gold: state.gold,
+      selectedTowerType: state.selectedTowerType,
+      selectTowerType: state.selectTowerType,
+    }))
+  );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {

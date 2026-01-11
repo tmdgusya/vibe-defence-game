@@ -9,6 +9,7 @@ import { Tower } from '../entities/Tower';
 import { TowerSystem } from '../systems/TowerSystem';
 import { EnemySystem } from '../systems/EnemySystem';
 import { ProjectileSystem } from '../systems/ProjectileSystem';
+import { useGameStore } from '../store/gameStore';
 
 /**
  * Main Game Scene
@@ -38,6 +39,9 @@ export default class GameScene extends Phaser.Scene {
   create(): void {
     console.log('GameScene: Creating game world...');
 
+    // Restore state from Zustand store (hydrated from localStorage)
+    this.restoreFromStore();
+
     this.createGrid();
     this.setupInput();
     this.setupEventListeners();
@@ -47,6 +51,23 @@ export default class GameScene extends Phaser.Scene {
     console.log('GameScene: Game world created successfully');
     console.log(
       `Grid: ${GRID_CONFIG.COLS}x${GRID_CONFIG.ROWS} (${GRID_CONFIG.WIDTH}x${GRID_CONFIG.HEIGHT}px)`
+    );
+  }
+
+  /**
+   * Restores game state from Zustand store (hydrated from localStorage)
+   */
+  private restoreFromStore(): void {
+    const state = useGameStore.getState();
+
+    // Sync local state with persisted store values
+    this.currentGold = state.gold;
+    this.currentWave = state.wave;
+    this.isPaused = state.isPaused;
+    this.selectedTowerType = state.selectedTowerType;
+
+    console.log(
+      `GameScene: Restored state - Gold: ${this.currentGold}, Wave: ${this.currentWave}, Paused: ${this.isPaused}`
     );
   }
 

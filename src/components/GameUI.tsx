@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import Header from './Header';
 import Footer from './Footer';
 import PhaserGame from './PhaserGame';
@@ -12,6 +13,7 @@ import { useGameLoop, useKeyboardControls } from '../hooks';
 type GameState = 'menu' | 'playing' | 'paused' | 'gameOver';
 
 const GameUI: React.FC = () => {
+  // Use shallow comparison to prevent unnecessary re-renders
   const {
     score,
     level,
@@ -21,7 +23,18 @@ const GameUI: React.FC = () => {
     isGameOver,
     setPaused,
     resetGame,
-  } = useGameStore();
+  } = useGameStore(
+    useShallow((state) => ({
+      score: state.score,
+      level: state.level,
+      lives: state.lives,
+      fps: state.fps,
+      isPaused: state.isPaused,
+      isGameOver: state.isGameOver,
+      setPaused: state.setPaused,
+      resetGame: state.resetGame,
+    }))
+  );
   const [gameState, setGameState] = useState<GameState>('playing');
   const [showTowerPanel, setShowTowerPanel] = useState(false);
 

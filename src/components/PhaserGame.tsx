@@ -66,9 +66,18 @@ const PhaserGame = forwardRef<PhaserGameRef>(function PhaserGame(_props, ref) {
 
   // Subscribe to game events from Phaser
   useEffect(() => {
-    // Scene lifecycle
+    // Scene lifecycle - sync hydrated state to Phaser
     const handleSceneReady = (data: GameEvents['sceneReady']): void => {
       console.log(`Scene ready: ${data.scene}`);
+
+      // If state was hydrated from localStorage, push it to Phaser
+      const state = useGameStore.getState();
+      if (state._hasHydrated && !state.isGameOver) {
+        console.log('Syncing hydrated state to Phaser');
+        // Emit events to sync React store state with Phaser
+        emitEvent('goldChanged', { gold: state.gold, change: 0 });
+        emitEvent('livesChanged', { lives: state.lives, change: 0 });
+      }
     };
 
     // Tower events
@@ -103,6 +112,23 @@ const PhaserGame = forwardRef<PhaserGameRef>(function PhaserGame(_props, ref) {
       useGameStore.getState().setScore(data.score);
     };
 
+    // Wave events
+    const handleWaveStarted = (data: GameEvents['waveStarted']): void => {
+      console.log(`Wave ${data.wave} started`);
+      useGameStore.getState().setWave(data.wave);
+    };
+
+    const handleWaveCompleted = (data: GameEvents['waveCompleted']): void => {
+      console.log(`Wave ${data.wave} completed, bonus: ${data.bonus}`);
+      // Wave number will be updated when next wave starts
+    };
+
+    // Enemy events
+    const handleEnemyKilled = (_data: GameEvents['enemyKilled']): void => {
+      useGameStore.getState().incrementEnemiesKilled();
+      // Gold reward is handled via goldChanged event from GameScene
+    };
+
     // Subscribe to all events
     subscribeToEvent('sceneReady', handleSceneReady);
     subscribeToEvent('towerPlaced', handleTowerPlaced);
@@ -111,6 +137,9 @@ const PhaserGame = forwardRef<PhaserGameRef>(function PhaserGame(_props, ref) {
     subscribeToEvent('gamePaused', handleGamePaused);
     subscribeToEvent('gameResumed', handleGameResumed);
     subscribeToEvent('gameOver', handleGameOver);
+    subscribeToEvent('waveStarted', handleWaveStarted);
+    subscribeToEvent('waveCompleted', handleWaveCompleted);
+    subscribeToEvent('enemyKilled', handleEnemyKilled);
 
     return (): void => {
       unsubscribeFromEvent('sceneReady', handleSceneReady);
@@ -120,6 +149,9 @@ const PhaserGame = forwardRef<PhaserGameRef>(function PhaserGame(_props, ref) {
       unsubscribeFromEvent('gamePaused', handleGamePaused);
       unsubscribeFromEvent('gameResumed', handleGameResumed);
       unsubscribeFromEvent('gameOver', handleGameOver);
+      unsubscribeFromEvent('waveStarted', handleWaveStarted);
+      unsubscribeFromEvent('waveCompleted', handleWaveCompleted);
+      unsubscribeFromEvent('enemyKilled', handleEnemyKilled);
     };
   }, []);
 
