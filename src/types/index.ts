@@ -84,6 +84,9 @@ export interface GridCell {
 
 // Event types for EventBus
 export type GameEventType =
+  | 'sceneReady'
+  | 'selectTower'
+  | 'placementFailed'
   | 'towerPlaced'
   | 'towerMerged'
   | 'towerSold'

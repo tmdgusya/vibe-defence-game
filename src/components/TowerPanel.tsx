@@ -4,7 +4,7 @@ import { useGameStore } from '../store/gameStore';
 import {
   subscribeToEvent,
   unsubscribeFromEvent,
-  EventData,
+  type GameEvents,
 } from '../utils/EventBus';
 
 interface TowerPanelProps {
@@ -25,7 +25,7 @@ const TowerPanel: React.FC<TowerPanelProps> = ({ className = '' }) => {
   const [showMergeIndicator, setShowMergeIndicator] = useState(false);
 
   useEffect(() => {
-    const handleTowerSelected = (data: EventData['towerSelected']) => {
+    const handleTowerSelected = (data: GameEvents['towerSelected']) => {
       const tower: TowerData = {
         ...data.tower,
         type: data.tower.type as TowerType,
@@ -37,7 +37,7 @@ const TowerPanel: React.FC<TowerPanelProps> = ({ className = '' }) => {
       setSelectedTower(null);
     };
 
-    const handleMergeAvailable = (data: EventData['mergeAvailable']) => {
+    const handleMergeAvailable = (data: GameEvents['mergeAvailable']) => {
       setShowMergeIndicator(data.available);
     };
 
