@@ -7,6 +7,7 @@ import {
 } from '../utils/EventBus';
 import { Tower } from '../entities/Tower';
 import { TowerSystem } from '../systems/TowerSystem';
+import { EnemySystem } from '../systems/EnemySystem';
 
 /**
  * Main Game Scene
@@ -15,8 +16,10 @@ import { TowerSystem } from '../systems/TowerSystem';
 export default class GameScene extends Phaser.Scene {
   private gridCells: Phaser.GameObjects.Image[][] = [];
   private towerSystem: TowerSystem;
+  private enemySystem: EnemySystem;
   private selectedTowerType: TowerType | null = null;
   private currentGold: number = 200;
+  private currentWave: number = 1;
   private isPaused: boolean = false;
   private draggedTowerType: TowerType | null = null;
   private ghostTower: Phaser.GameObjects.Sprite | null = null;
@@ -26,6 +29,7 @@ export default class GameScene extends Phaser.Scene {
   constructor() {
     super({ key: 'GameScene' });
     this.towerSystem = new TowerSystem(this);
+    this.enemySystem = new EnemySystem(this);
   }
 
   create(): void {
@@ -83,6 +87,11 @@ export default class GameScene extends Phaser.Scene {
       this.isPaused = false;
       this.scene.resume();
     });
+
+    // Listen for wave completion to advance wave counter
+    subscribeToEvent('waveCompleted', (data: GameEvents['waveCompleted']) => {
+      this.currentWave = data.wave + 1;
+    });
   }
 
   private updateGridHighlighting(): void {
@@ -98,8 +107,10 @@ export default class GameScene extends Phaser.Scene {
     }
   }
 
-  update(_time: number, _delta: number): void {
-    // Game loop - will be expanded with game logic
+  update(time: number, delta: number): void {
+    if (!this.isPaused) {
+      this.enemySystem.update(time, delta);
+    }
   }
 
   /**
@@ -164,7 +175,9 @@ export default class GameScene extends Phaser.Scene {
     });
 
     this.input.keyboard?.on('keydown-SPACE', () => {
-      console.log('Space pressed - Wave start (not implemented yet)');
+      if (!this.enemySystem.isWaveInProgress()) {
+        this.enemySystem.startWave(this.currentWave);
+      }
     });
 
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
@@ -431,5 +444,19 @@ export default class GameScene extends Phaser.Scene {
       this.previewCell.destroy();
       this.previewCell = null;
     }
+  }
+
+  /**
+   * Returns the EnemySystem instance
+   */
+  public getEnemySystem(): EnemySystem {
+    return this.enemySystem;
+  }
+
+  /**
+   * Returns the TowerSystem instance
+   */
+  public getTowerSystem(): TowerSystem {
+    return this.towerSystem;
   }
 }

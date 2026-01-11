@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { EnemyData, EnemyType } from '../types';
+import { emitEvent } from '../utils/EventBus';
 
 export interface EnemyConfig {
   type: EnemyType;
@@ -161,6 +162,18 @@ export class Enemy extends Phaser.GameObjects.Container {
   }
 
   public onDeath(): void {
+    // Emit enemyKilled event with reward
+    emitEvent('enemyKilled', {
+      enemy: this.getData(),
+      reward: this.enemyData.reward,
+    });
+
+    // Emit scene event for EnemySystem tracking
+    this.scene.events.emit('enemyKilled', {
+      enemy: this.getData(),
+      reward: this.enemyData.reward,
+    });
+
     if (this.sprite.anims.exists(`${this.config.spriteKey}-death`)) {
       this.sprite.play(`${this.config.spriteKey}-death`);
       this.sprite.on('animationcomplete', () => {

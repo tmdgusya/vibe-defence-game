@@ -153,6 +153,16 @@ vi.mock('phaser', () => {
     Tweens: {
       TweenChain: MockTweenChain,
     },
+    Events: {
+      EventEmitter: vi.fn().mockImplementation(() => ({
+        on: vi.fn(),
+        off: vi.fn(),
+        emit: vi.fn(),
+        once: vi.fn(),
+        removeListener: vi.fn(),
+        removeAllListeners: vi.fn(),
+      })),
+    },
   };
 
   return {
