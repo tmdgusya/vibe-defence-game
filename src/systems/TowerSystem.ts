@@ -6,6 +6,9 @@ interface TowerStats {
   attackSpeed: number;
   range: number;
   cost: number;
+  splashDamage?: number;
+  splashRadius?: number;
+  pierceCount?: number;
 }
 
 interface TowerConfiguration {
@@ -20,6 +23,11 @@ interface TowerConfiguration {
     [TowerLevel.ELITE]: TowerStats;
   };
   [TowerType.WALLNUT]: {
+    [TowerLevel.BASIC]: TowerStats;
+    [TowerLevel.ADVANCED]: TowerStats;
+    [TowerLevel.ELITE]: TowerStats;
+  };
+  [TowerType.MORTAR]: {
     [TowerLevel.BASIC]: TowerStats;
     [TowerLevel.ADVANCED]: TowerStats;
     [TowerLevel.ELITE]: TowerStats;
@@ -87,6 +95,32 @@ const TOWER_CONFIG: TowerConfiguration = {
       cost: 185,
     },
   },
+  [TowerType.MORTAR]: {
+    [TowerLevel.BASIC]: {
+      damage: 6,
+      attackSpeed: 0.8,
+      range: 2.5,
+      cost: 175,
+      splashDamage: 12,
+      splashRadius: 1.5,
+    },
+    [TowerLevel.ADVANCED]: {
+      damage: 9,
+      attackSpeed: 1.0,
+      range: 2.8,
+      cost: 300,
+      splashDamage: 18,
+      splashRadius: 1.8,
+    },
+    [TowerLevel.ELITE]: {
+      damage: 14,
+      attackSpeed: 1.2,
+      range: 3.2,
+      cost: 500,
+      splashDamage: 28,
+      splashRadius: 2.2,
+    },
+  },
 };
 
 export class TowerSystem {
@@ -151,6 +185,7 @@ export class TowerSystem {
       TowerType.SUNFLOWER,
       TowerType.WALLNUT,
       TowerType.PEASHOOTER,
+      TowerType.MORTAR,
     ];
 
     for (const type of allTypes) {
@@ -239,6 +274,8 @@ export class TowerSystem {
         return 'Economy tower that generates resources over time';
       case TowerType.WALLNUT:
         return 'Defensive barrier that blocks enemy progress';
+      case TowerType.MORTAR:
+        return 'Area-of-effect tower that damages all enemies in splash radius';
       default:
         return 'Unknown tower type';
     }
@@ -252,6 +289,8 @@ export class TowerSystem {
         return 'Resource Generation';
       case TowerType.WALLNUT:
         return 'Block Path';
+      case TowerType.MORTAR:
+        return 'Splash Damage';
       default:
         return 'No Ability';
     }

@@ -7,6 +7,8 @@ export class Projectile extends Phaser.GameObjects.Container {
   private projectileData: ProjectileData;
   private target: Enemy | null;
   private isDestroyed: boolean = false;
+  private arcHeight: number = 0;
+  private arcTween?: Phaser.Tweens.Tween;
 
   constructor(
     scene: Phaser.Scene,
@@ -17,13 +19,34 @@ export class Projectile extends Phaser.GameObjects.Container {
   ) {
     super(scene, x, y);
 
-    this.projectileData = data;
     this.target = target;
 
+    const extendedData = {
+      ...data,
+      hitEnemies: new Set<any>(),
+    };
+
+    this.projectileData = extendedData;
     this.createSprite();
     this.setupPhysics();
 
+    if (this.projectileData.isMortar) {
+      this.setupArcAnimation();
+    }
+
     scene.add.existing(this);
+  }
+
+  private setupArcAnimation(): void {
+    this.scene.tweens.add({
+      targets: this.sprite,
+      scaleX: { from: 1.5, to: 0.8 },
+      scaleY: { from: 1.5, to: 0.8 },
+      duration: 800,
+      ease: 'Sine.easeInOut',
+      repeat: -1,
+      yoyo: true,
+    });
   }
 
   private createSprite(): void {
@@ -44,20 +67,20 @@ export class Projectile extends Phaser.GameObjects.Container {
 
     // Check if target is still valid
     if (!this.target || !this.target.active) {
-      this.destroy();
-      return;
+      if (!this.projectileData.splashRadius) {
+        this.destroy();
+        return;
+      }
     }
 
-    // Calculate direction to target
-    const dx = this.target.x - this.x;
-    const dy = this.target.y - this.y;
+    // Calculate direction to target position
+    const targetPos = this.target
+      ? { x: this.target.x, y: this.target.y }
+      : { x: this.x + 100, y: this.y };
+
+    const dx = targetPos.x - this.x;
+    const dy = targetPos.y - this.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
-
-    // Check if we've reached the target
-    if (distance < 10) {
-      this.onHitTarget();
-      return;
-    }
 
     // Normalize and apply velocity
     const vx = (dx / distance) * this.projectileData.speed;

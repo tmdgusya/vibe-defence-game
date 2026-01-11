@@ -37,8 +37,11 @@ export class ProjectileSystem {
     for (const tower of towers) {
       const towerData = tower.getData();
 
-      // Only PEASHOOTER can attack
-      if (towerData.type !== TowerType.PEASHOOTER) continue;
+      if (
+        towerData.type !== TowerType.PEASHOOTER &&
+        towerData.type !== TowerType.MORTAR
+      )
+        continue;
 
       // Check cooldown
       const lastAttack = this.towerCooldowns.get(tower) || 0;
@@ -91,10 +94,26 @@ export class ProjectileSystem {
   private spawnProjectile(tower: Tower, target: Enemy): Projectile {
     const towerData = tower.getData();
 
-    const projectile = new Projectile(this.scene, tower.x, tower.y, target, {
+    const isMortar = towerData.type === TowerType.MORTAR;
+
+    const projectileData = {
       damage: towerData.damage,
       speed: PROJECTILE_SPEED,
-    });
+      splashDamage: towerData.splashDamage,
+      splashRadius: towerData.splashRadius,
+      splashDamageMultiplier: 0.5,
+      pierceCount: towerData.pierceCount || 0,
+      hitEnemies: new Set<any>(),
+      isMortar,
+    };
+
+    const projectile = new Projectile(
+      this.scene,
+      tower.x,
+      tower.y,
+      target,
+      projectileData
+    );
 
     this.activeProjectiles.add(projectile);
 

@@ -10,6 +10,7 @@ import { TowerSystem } from '../systems/TowerSystem';
 import { EnemySystem } from '../systems/EnemySystem';
 import { ProjectileSystem } from '../systems/ProjectileSystem';
 import { useGameStore } from '../store/gameStore';
+import { CollisionSystem } from '../systems/CollisionSystem';
 
 /**
  * Main Game Scene
@@ -20,6 +21,7 @@ export default class GameScene extends Phaser.Scene {
   private towerSystem: TowerSystem;
   private enemySystem: EnemySystem;
   private projectileSystem: ProjectileSystem;
+  private collisionSystem: CollisionSystem;
   private selectedTowerType: TowerType | null = null;
   private currentGold: number = 200;
   private currentWave: number = 1;
@@ -34,6 +36,7 @@ export default class GameScene extends Phaser.Scene {
     this.towerSystem = new TowerSystem(this);
     this.enemySystem = new EnemySystem(this);
     this.projectileSystem = new ProjectileSystem(this);
+    this.collisionSystem = new CollisionSystem(this);
   }
 
   create(): void {
@@ -135,6 +138,7 @@ export default class GameScene extends Phaser.Scene {
     if (!this.isPaused) {
       this.enemySystem.update(time, delta);
       this.projectileSystem.update(time, delta);
+      this.collisionSystem.update(time, delta);
     }
   }
 
@@ -490,6 +494,10 @@ export default class GameScene extends Phaser.Scene {
    */
   public getProjectileSystem(): ProjectileSystem {
     return this.projectileSystem;
+  }
+
+  public getCollisionSystem(): CollisionSystem {
+    return this.collisionSystem;
   }
 
   /**
