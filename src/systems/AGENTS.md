@@ -20,9 +20,8 @@ src/systems/
 | Merge logic          | TowerSystem.canMerge()          | Manhattan distance === 1                 |
 | Economy              | TowerSystem.purchaseTower()     | Gold deduction                           |
 
-```
-
 ## CONVENTIONS
+
 - Configuration-driven (TOWER_CONFIG nested object)
 - Validation returns structured results
 - Scene injected via constructor
@@ -30,7 +29,7 @@ src/systems/
 - Factory methods for object creation
 
 ## ANTI-PATTERNS
+
 - NO Phaser API calls in this directory
 - NO magic numbers (use constants)
 - NO side effects in validation methods
-```
