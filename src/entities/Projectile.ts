@@ -7,8 +7,6 @@ export class Projectile extends Phaser.GameObjects.Container {
   private projectileData: ProjectileData;
   private target: Enemy | null;
   private isDestroyed: boolean = false;
-  private arcHeight: number = 0;
-  private arcTween?: Phaser.Tweens.Tween;
 
   constructor(
     scene: Phaser.Scene,
@@ -93,18 +91,12 @@ export class Projectile extends Phaser.GameObjects.Container {
     this.sprite.rotation = Math.atan2(dy, dx);
   }
 
-  private onHitTarget(): void {
-    if (this.isDestroyed || !this.target) return;
-
-    // Apply damage to enemy
-    this.target.takeDamage(this.projectileData.damage);
-
-    // Destroy projectile
-    this.destroy();
-  }
-
   public getTarget(): Enemy | null {
     return this.target;
+  }
+
+  public getData(): ProjectileData & { hitEnemies: Set<any> } {
+    return this.projectileData as ProjectileData & { hitEnemies: Set<any> };
   }
 
   public getDamage(): number {

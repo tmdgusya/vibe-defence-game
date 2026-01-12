@@ -7,3 +7,5 @@ export { default as TowerSelectionPanel } from './TowerSelectionPanel';
 export { default as TowerPanel } from './TowerPanel';
 export { default as PauseMenu } from './PauseMenu';
 export { default as GameOverScreen } from './GameOverScreen';
+export { default as WaveProgress } from './WaveProgress';
+export { default as GameStats } from './GameStats';

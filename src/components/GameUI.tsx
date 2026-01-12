@@ -7,6 +7,8 @@ import TowerSelectionPanel from './TowerSelectionPanel';
 import TowerPanel from './TowerPanel';
 import PauseMenu from './PauseMenu';
 import GameOverScreen from './GameOverScreen';
+import WaveProgress from './WaveProgress';
+import GameStats from './GameStats';
 import { useGameStore } from '../store/gameStore';
 import { useGameLoop, useKeyboardControls } from '../hooks';
 
@@ -82,14 +84,18 @@ const GameUI: React.FC = () => {
         isPaused={isPaused}
       />
 
-      <main className="flex-1 container mx-auto py-4">
-        <div className="flex justify-center items-start h-full gap-4">
-          <div className="flex gap-4">
+      <main className="flex-1 container mx-auto py-4 px-2 md:px-4">
+        <div className="flex flex-col md:flex-row justify-center items-start gap-4">
+          <div className="flex flex-col gap-4 w-full md:w-64 order-2 md:order-1">
             <TowerSelectionPanel />
             {showTowerPanel && <TowerPanel />}
+            <WaveProgress />
+            <GameStats />
           </div>
-          <PhaserGame />
-          <div className="w-8">
+          <div className="flex-1 order-1 md:order-2">
+            <PhaserGame />
+          </div>
+          <div className="hidden md:flex w-8 order-3">
             <button
               onClick={() => setShowTowerPanel(!showTowerPanel)}
               className="bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-l-lg transition-colors"
@@ -141,27 +147,21 @@ const GameUI: React.FC = () => {
   return (
     <>
       {gameState === 'menu' && renderMenu()}
-      {gameState === 'playing' && renderMainGame()}
 
+      {/* Always render main game when not in menu to prevent PhaserGame remounting */}
+      {gameState !== 'menu' && renderMainGame()}
+
+      {/* Overlay menus on top of the game */}
       {gameState === 'paused' && (
-        <>
-          {renderMainGame()}
-          <PauseMenu
-            onResume={() => setPaused(false)}
-            onRestart={handleRestart}
-            onMainMenu={handleMainMenu}
-          />
-        </>
+        <PauseMenu
+          onResume={() => setPaused(false)}
+          onRestart={handleRestart}
+          onMainMenu={handleMainMenu}
+        />
       )}
 
       {gameState === 'gameOver' && (
-        <>
-          {renderMainGame()}
-          <GameOverScreen
-            onRestart={handleRestart}
-            onMainMenu={handleMainMenu}
-          />
-        </>
+        <GameOverScreen onRestart={handleRestart} onMainMenu={handleMainMenu} />
       )}
     </>
   );

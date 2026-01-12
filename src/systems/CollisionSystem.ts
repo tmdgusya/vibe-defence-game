@@ -110,7 +110,7 @@ export class CollisionSystem {
       : (projectileData.splashDamage || 0) *
         (projectileData.splashDamageMultiplier || 0.5);
 
-    const _killed = enemy.takeDamage(damage);
+    enemy.takeDamage(damage);
 
     emitEvent('projectileHit', {
       enemy: enemyData,
@@ -130,7 +130,6 @@ export class CollisionSystem {
     const splashRadius = projectileData.splashRadius || 0;
     const splashRadiusPixels = splashRadius * 80;
     const enemies = this.scene.getEnemySystem().getActiveEnemies();
-    const _projectileTarget = projectile.getTarget();
     const isElite = projectileData.damage > 10;
 
     this.createSplashVisual(
@@ -212,14 +211,14 @@ export class CollisionSystem {
   }
 
   private setupDebugToggle(): void {
-    this.scene.input.keyboard.on('keydown-D', () => {
+    this.scene.input.keyboard?.on('keydown-D', () => {
       this.toggleDebugMode();
     });
   }
 
   private toggleDebugMode(): void {
     this.debugEnabled = !this.debugEnabled;
-    this.debugGraphics.setVisible(this.debugEnabled);
+    this.debugGraphics?.setVisible(this.debugEnabled);
   }
 
   private drawDebugShapes(): void {

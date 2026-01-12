@@ -57,6 +57,7 @@ const TowerPanel: React.FC<TowerPanelProps> = ({ className = '' }) => {
       [TowerType.PEASHOOTER]: 'Peashooter',
       [TowerType.SUNFLOWER]: 'Sunflower',
       [TowerType.WALLNUT]: 'Wallnut',
+      [TowerType.MORTAR]: 'Mortar',
     };
     return names[type] || 'Unknown Tower';
   };
@@ -66,6 +67,7 @@ const TowerPanel: React.FC<TowerPanelProps> = ({ className = '' }) => {
       [TowerType.PEASHOOTER]: '🌱',
       [TowerType.SUNFLOWER]: '🌻',
       [TowerType.WALLNUT]: '🥜',
+      [TowerType.MORTAR]: '💣',
     };
     return icons[type] || '🏰';
   };

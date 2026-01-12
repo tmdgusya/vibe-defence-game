@@ -6,9 +6,10 @@ export const useKeyboardControls = () => {
 
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
+      // Note: SPACE is handled by Phaser for starting waves
+      // Only use P and Escape for pause at React level
       switch (event.key.toLowerCase()) {
         case 'p':
-        case ' ':
           event.preventDefault();
           setPaused(!useGameStore.getState().isPaused);
           break;

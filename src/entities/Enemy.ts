@@ -46,7 +46,12 @@ export class Enemy extends Phaser.GameObjects.Container {
   }
 
   private createSprite(): void {
-    this.sprite = this.scene.add.sprite(0, 0, this.config.spriteKey);
+    // Use scene.make to create without auto-adding to scene
+    this.sprite = this.scene.make.sprite({
+      x: 0,
+      y: 0,
+      key: this.config.spriteKey,
+    });
     const scale = this.config.scale || 1.0;
     this.sprite.setScale(scale);
     this.sprite.setOrigin(0.5, 0.5);
@@ -63,7 +68,8 @@ export class Enemy extends Phaser.GameObjects.Container {
   }
 
   private createHealthBar(): void {
-    this.healthBar = this.scene.add.graphics();
+    // Use scene.make to create without auto-adding to scene
+    this.healthBar = this.scene.make.graphics({});
     // Add healthBar to container so it moves with the enemy
     this.add(this.healthBar);
     this.updateHealthBar();
@@ -94,7 +100,11 @@ export class Enemy extends Phaser.GameObjects.Container {
   }
 
   private setupAnimations(): void {
-    this.sprite.play(`${this.config.spriteKey}-idle`);
+    const animKey = `${this.config.spriteKey}-idle`;
+    if (this.sprite.anims.exists(animKey)) {
+      this.sprite.play(animKey);
+    }
+    // If animation doesn't exist, sprite will display static texture
   }
 
   public getPath(): Phaser.Math.Vector2[] {
@@ -197,7 +207,14 @@ export class Enemy extends Phaser.GameObjects.Container {
   }
 
   public onReachEnd(): void {
+    // Emit to scene event system for EnemySystem tracking
     this.scene.events.emit('enemyReachedEnd', {
+      enemy: this.getData(),
+      damage: 1,
+    });
+
+    // Emit to EventBus for UI updates and game state
+    emitEvent('enemyReachedEnd', {
       enemy: this.getData(),
       damage: 1,
     });

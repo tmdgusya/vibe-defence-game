@@ -6,29 +6,38 @@ describe('Enemy System', () => {
   let mockScene: any;
 
   beforeEach(() => {
+    const createMockSprite = () => ({
+      setScale: vi.fn().mockReturnThis(),
+      setOrigin: vi.fn().mockReturnThis(),
+      setTint: vi.fn().mockReturnThis(),
+      clearTint: vi.fn().mockReturnThis(),
+      play: vi.fn().mockReturnThis(),
+      on: vi.fn().mockReturnThis(),
+      destroy: vi.fn(),
+      width: 64,
+      height: 64,
+      anims: {
+        exists: vi.fn().mockReturnValue(false),
+      },
+    });
+
+    const createMockGraphics = () => ({
+      clear: vi.fn().mockReturnThis(),
+      fillStyle: vi.fn().mockReturnThis(),
+      fillRect: vi.fn().mockReturnThis(),
+      destroy: vi.fn(),
+    });
+
     mockScene = {
       add: {
         existing: vi.fn(),
-        sprite: vi.fn().mockReturnValue({
-          setScale: vi.fn().mockReturnThis(),
-          setOrigin: vi.fn().mockReturnThis(),
-          setTint: vi.fn().mockReturnThis(),
-          clearTint: vi.fn().mockReturnThis(),
-          play: vi.fn().mockReturnThis(),
-          on: vi.fn().mockReturnThis(),
-          destroy: vi.fn(),
-          width: 64,
-          height: 64,
-          anims: {
-            exists: vi.fn().mockReturnValue(false),
-          },
-        }),
-        graphics: vi.fn().mockReturnValue({
-          clear: vi.fn().mockReturnThis(),
-          fillStyle: vi.fn().mockReturnThis(),
-          fillRect: vi.fn().mockReturnThis(),
-          destroy: vi.fn(),
-        }),
+        sprite: vi.fn().mockImplementation(createMockSprite),
+        graphics: vi.fn().mockImplementation(createMockGraphics),
+      },
+      // scene.make is used for Container children (doesn't auto-add to scene)
+      make: {
+        sprite: vi.fn().mockImplementation(createMockSprite),
+        graphics: vi.fn().mockImplementation(createMockGraphics),
       },
       physics: {
         add: {

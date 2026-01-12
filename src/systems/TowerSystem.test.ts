@@ -298,33 +298,33 @@ describe('TowerSystem', () => {
       expect(towerSystem.getTowerAbility(TowerType.WALLNUT)).toBe('Block Path');
     });
 
-  describe('TowerSystem - Mortar Tower', () => {
-    it('should create mortar tower with splash damage stats', () => {
-      const towerData = towerSystem.createTowerData(
-        TowerType.MORTAR,
-        TowerLevel.BASIC,
-        2,
-        2
-      );
+    describe('TowerSystem - Mortar Tower', () => {
+      it('should create mortar tower with splash damage stats', () => {
+        const towerData = towerSystem.createTowerData(
+          TowerType.MORTAR,
+          TowerLevel.BASIC,
+          2,
+          2
+        );
 
-      expect(towerData.splashDamage).toBe(12);
-      expect(towerData.splashRadius).toBe(1.5);
-      expect(towerData.damage).toBe(6);
-    });
+        expect(towerData.splashDamage).toBe(12);
+        expect(towerData.splashRadius).toBe(1.5);
+        expect(towerData.damage).toBe(6);
+      });
 
-    it('should scale splash damage with level', () => {
-      const basic = towerSystem.getTowerStats(
-        TowerType.MORTAR,
-        TowerLevel.BASIC
-      );
-      const elite = towerSystem.getTowerStats(
-        TowerType.MORTAR,
-        TowerLevel.ELITE
-      );
+      it('should scale splash damage with level', () => {
+        const basic = towerSystem.getTowerStats(
+          TowerType.MORTAR,
+          TowerLevel.BASIC
+        );
+        const elite = towerSystem.getTowerStats(
+          TowerType.MORTAR,
+          TowerLevel.ELITE
+        );
 
-      expect(elite.splashDamage).toBeGreaterThan(basic.splashDamage);
-      expect(elite.splashRadius).toBeGreaterThan(basic.splashRadius);
+        expect(elite.splashDamage!).toBeGreaterThan(basic.splashDamage!);
+        expect(elite.splashRadius!).toBeGreaterThan(basic.splashRadius!);
+      });
     });
   });
-});
 });
