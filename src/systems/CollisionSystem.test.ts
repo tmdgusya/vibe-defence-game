@@ -1,8 +1,7 @@
-/* eslint-disable no-undef, no-magic-numbers */
+/* eslint-disable no-undef, no-magic-numbers, @typescript-eslint/no-unsafe-function-type, @typescript-eslint/explicit-function-return-type, @typescript-eslint/no-explicit-any, @typescript-eslint/no-non-null-assertion */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { CollisionSystem } from './CollisionSystem';
 import { TowerType } from '../types';
-import Phaser from 'phaser';
 
 // Mock Phaser - inline class definition since vi.mock is hoisted
 vi.mock('phaser', () => {
