@@ -13,6 +13,13 @@ export class CollisionSystem {
 
   constructor(scene: GameScene) {
     this.scene = scene;
+  }
+
+  /**
+   * Initialize debug graphics and keyboard toggle.
+   * Must be called after scene.create() when scene.add and scene.input are available.
+   */
+  public init(): void {
     this.setupDebugGraphics();
     this.setupDebugToggle();
   }
@@ -103,7 +110,7 @@ export class CollisionSystem {
       : (projectileData.splashDamage || 0) *
         (projectileData.splashDamageMultiplier || 0.5);
 
-    const killed = enemy.takeDamage(damage);
+    const _killed = enemy.takeDamage(damage);
 
     emitEvent('projectileHit', {
       enemy: enemyData,
@@ -123,7 +130,7 @@ export class CollisionSystem {
     const splashRadius = projectileData.splashRadius || 0;
     const splashRadiusPixels = splashRadius * 80;
     const enemies = this.scene.getEnemySystem().getActiveEnemies();
-    const projectileTarget = projectile.getTarget();
+    const _projectileTarget = projectile.getTarget();
     const isElite = projectileData.damage > 10;
 
     this.createSplashVisual(

@@ -1,5 +1,4 @@
 import Phaser from 'phaser';
-import { loadEnemySprites, createEnemyAnimations } from '../entities';
 
 export default class BootScene extends Phaser.Scene {
   private loadingBar!: Phaser.GameObjects.Graphics;
@@ -13,8 +12,6 @@ export default class BootScene extends Phaser.Scene {
   preload(): void {
     this.createLoadingUI();
     this.setupLoadEvents();
-
-    loadEnemySprites(this);
     this.simulateLoading();
   }
 
@@ -26,7 +23,6 @@ export default class BootScene extends Phaser.Scene {
       console.log('Renderer: Canvas');
     }
 
-    createEnemyAnimations(this);
     this.scene.start('GameScene');
   }
 
@@ -79,6 +75,7 @@ export default class BootScene extends Phaser.Scene {
     this.generateTowerTextures(graphics);
     this.generateEnemyTextures(graphics);
     this.generateProjectileTextures(graphics);
+    this.generateMergeParticleTexture(graphics);
 
     graphics.clear();
     graphics.lineStyle(2, 0x4a90d9, 0.5);
@@ -154,7 +151,9 @@ export default class BootScene extends Phaser.Scene {
     graphics.generateTexture('tower-placeholder', 64, 64);
   }
 
-  private generateProjectileTextures(graphics: Phaser.GameObjects.Graphics): void {
+  private generateProjectileTextures(
+    graphics: Phaser.GameObjects.Graphics
+  ): void {
     graphics.clear();
     graphics.fillStyle(0x8b4513);
     graphics.fillCircle(12, 12, 10);
@@ -167,36 +166,15 @@ export default class BootScene extends Phaser.Scene {
     graphics.fillCircle(8, 8, 6);
     graphics.generateTexture('projectile-placeholder', 16, 16);
   }
-    const towerConfigs = {
-      peashooter: { baseColor: 0x27ae60, accentColor: 0x229954 },
-      sunflower: { baseColor: 0xf39c12, accentColor: 0xf1c40f },
-      wallnut: { baseColor: 0x8b4513, accentColor: 0x6d4c41 },
-    };
 
-    Object.entries(towerConfigs).forEach(([type, config]) => {
-      for (let level = 1; level <= 3; level++) {
-        graphics.clear();
-        graphics.fillStyle(config.baseColor);
-        graphics.fillCircle(32, 32, 28 - (level - 1) * 2);
-
-        if (level >= 2) {
-          graphics.lineStyle(2, config.accentColor, 0.8);
-          graphics.strokeCircle(32, 32, 30);
-        }
-        if (level >= 3) {
-          graphics.lineStyle(2, config.accentColor, 0.9);
-          graphics.strokeCircle(32, 32, 34);
-        }
-
-        const textureKey =
-          level === 1 ? `tower-${type}` : `tower-${type}-${level}`;
-        graphics.generateTexture(textureKey, 64, 64);
-      }
-    });
-
+  private generateMergeParticleTexture(
+    graphics: Phaser.GameObjects.Graphics
+  ): void {
     graphics.clear();
-    graphics.fillStyle(0x27ae60);
-    graphics.fillRect(0, 0, 64, 64);
-    graphics.generateTexture('tower-placeholder', 64, 64);
+    graphics.fillStyle(0xffd700, 0.8);
+    graphics.fillCircle(8, 8, 8);
+    graphics.fillStyle(0xffa500, 0.6);
+    graphics.fillCircle(8, 8, 4);
+    graphics.generateTexture('merge-particle', 16, 16);
   }
 }

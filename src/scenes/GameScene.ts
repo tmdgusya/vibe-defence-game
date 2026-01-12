@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { GRID_CONFIG, TowerType, TowerLevel } from '../types';
+import { GRID_CONFIG, TowerType, TowerLevel, TowerData } from '../types';
 import {
   emitEvent,
   subscribeToEvent,
@@ -11,6 +11,7 @@ import { EnemySystem } from '../systems/EnemySystem';
 import { ProjectileSystem } from '../systems/ProjectileSystem';
 import { useGameStore } from '../store/gameStore';
 import { CollisionSystem } from '../systems/CollisionSystem';
+import { getAudioSystem } from '../systems/AudioSystem';
 
 /**
  * Main Game Scene
@@ -48,6 +49,9 @@ export default class GameScene extends Phaser.Scene {
     this.createGrid();
     this.setupInput();
     this.setupEventListeners();
+
+    // Initialize collision system after scene is ready
+    this.collisionSystem.init();
 
     emitEvent('sceneReady', { scene: 'GameScene' });
 
@@ -118,6 +122,45 @@ export default class GameScene extends Phaser.Scene {
     // Listen for wave completion to advance wave counter
     subscribeToEvent('waveCompleted', (data: GameEvents['waveCompleted']) => {
       this.currentWave = data.wave + 1;
+    });
+
+    const audioSystem = getAudioSystem();
+
+    subscribeToEvent('projectileFired', () => {
+      audioSystem.playSound('towerShoot');
+    });
+
+    subscribeToEvent('projectileHit', () => {
+      audioSystem.playSound('towerHit');
+    });
+
+    subscribeToEvent('enemyKilled', () => {
+      audioSystem.playSound('enemyDeath');
+    });
+
+    subscribeToEvent('waveStarted', () => {
+      audioSystem.playSound('waveStart');
+    });
+
+    subscribeToEvent('waveCompleted', () => {
+      audioSystem.playSound('waveComplete');
+      audioSystem.playSound('goldEarned');
+    });
+
+    subscribeToEvent('towerPlaced', () => {
+      audioSystem.playSound('towerPlace');
+    });
+
+    subscribeToEvent('towerUpgrade', () => {
+      audioSystem.playSound('towerUpgrade');
+    });
+
+    subscribeToEvent('gameOver', (data: GameEvents['gameOver']) => {
+      if (data.won) {
+        audioSystem.playSound('victory');
+      } else {
+        audioSystem.playSound('gameOver');
+      }
     });
   }
 
@@ -304,6 +347,8 @@ export default class GameScene extends Phaser.Scene {
 
     this.showSuccessFlash(gridX, gridY);
 
+    this.checkForMerge(tower);
+
     console.log(`Tower placed at (${gridX}, ${gridY})`);
   }
 
@@ -475,8 +520,198 @@ export default class GameScene extends Phaser.Scene {
     }
   }
 
+  private checkForMerge(tower: Tower): void {
+    const towerData = tower.getData();
+    const neighbors = this.getNeighbors(towerData.gridX, towerData.gridY);
+    let mergeAvailable = false;
+
+    for (const neighbor of neighbors) {
+      if (
+        neighbor &&
+        this.towerSystem.canMerge(towerData, neighbor.getData())
+      ) {
+        mergeAvailable = true;
+      }
+    }
+
+    tower.setCanMerge(mergeAvailable);
+
+    for (const neighbor of neighbors) {
+      if (neighbor) {
+        const neighborData = neighbor.getData();
+        const neighborNeighbors = this.getNeighbors(
+          neighborData.gridX,
+          neighborData.gridY
+        );
+        let neighborMergeAvailable = false;
+
+        for (const nn of neighborNeighbors) {
+          if (
+            nn &&
+            nn !== tower &&
+            this.towerSystem.canMerge(neighborData, nn.getData())
+          ) {
+            neighborMergeAvailable = true;
+          }
+        }
+
+        neighbor.setCanMerge(neighborMergeAvailable);
+      }
+    }
+
+    for (const neighbor of neighbors) {
+      if (
+        neighbor &&
+        this.towerSystem.canMerge(towerData, neighbor.getData())
+      ) {
+        this.performMerge(tower, neighbor);
+        break;
+      }
+    }
+  }
+
+  private getNeighbors(gridX: number, gridY: number): Tower[] {
+    const neighbors: Tower[] = [];
+    const directions = [
+      [-1, 0],
+      [1, 0],
+      [0, -1],
+      [0, 1],
+    ];
+
+    for (const [dx, dy] of directions) {
+      const nx = gridX + dx;
+      const ny = gridY + dy;
+
+      if (
+        nx >= 0 &&
+        nx < GRID_CONFIG.COLS &&
+        ny >= 0 &&
+        ny < GRID_CONFIG.ROWS
+      ) {
+        const cell = this.gridCells[ny][nx];
+        if (cell.getData('occupied')) {
+          const tower = cell.getData('tower') as Tower;
+          if (tower) {
+            neighbors.push(tower);
+          }
+        }
+      }
+    }
+
+    return neighbors;
+  }
+
+  private performMerge(tower1: Tower, tower2: Tower): void {
+    const data1 = tower1.getData();
+    const data2 = tower2.getData();
+
+    const result = this.towerSystem.getMergeResult(data1, data2);
+
+    if (!result) {
+      return;
+    }
+
+    this.createMergeParticles(tower1.x, tower1.y, tower2.x, tower2.y);
+
+    this.animateMergeTransition(tower1, tower2, result);
+  }
+
+  private createMergeParticles(
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number
+  ): void {
+    const centerX = (x1 + x2) / 2;
+    const centerY = (y1 + y2) / 2;
+
+    const particles = this.add.particles(0, 0, 'merge-particle', {
+      speed: { min: 50, max: 150 },
+      angle: { min: 0, max: 360 },
+      scale: { start: 1, end: 0 },
+      alpha: { start: 1, end: 0 },
+      blendMode: 'ADD',
+      lifespan: 500,
+      emitting: false,
+    });
+
+    particles.explode(20, centerX, centerY);
+  }
+
+  private animateMergeTransition(
+    tower1: Tower,
+    tower2: Tower,
+    result: TowerData
+  ): void {
+    const centerX = (tower1.x + tower2.x) / 2;
+    const centerY = (tower1.y + tower2.y) / 2;
+
+    this.tweens.add({
+      targets: [tower1, tower2],
+      x: centerX,
+      y: centerY,
+      scale: { from: 1, to: 0 },
+      alpha: { from: 1, to: 0 },
+      duration: 300,
+      ease: 'Power2',
+      onComplete: () => {
+        const data1 = tower1.getData();
+        const data2 = tower2.getData();
+
+        tower1.destroy();
+        tower2.destroy();
+
+        this.clearCells(data1.gridX, data1.gridY);
+        this.clearCells(data2.gridX, data2.gridY);
+
+        const newTower = new Tower(this, result);
+        const cell = this.gridCells[result.gridY][result.gridX];
+        cell.setData('occupied', true);
+        cell.setData('tower', newTower);
+
+        newTower.setScale(0);
+        this.tweens.add({
+          targets: newTower,
+          scale: 1,
+          duration: 200,
+          ease: 'Back.out',
+          onComplete: () => {
+            emitEvent('towerMerged', {
+              result,
+              consumed: [data1, data2],
+            });
+            this.showMergeFlash(result.gridX, result.gridY);
+          },
+        });
+      },
+    });
+  }
+
+  private showMergeFlash(gridX: number, gridY: number): void {
+    const cell = this.gridCells[gridY][gridX];
+    cell.setTint(0xffd700);
+
+    this.tweens.add({
+      targets: cell,
+      alpha: { from: 0.5, to: 1 },
+      duration: 100,
+      yoyo: true,
+      repeat: 3,
+      onComplete: () => {
+        cell.clearTint();
+      },
+    });
+  }
+
+  private clearCells(gridX: number, gridY: number): void {
+    const cell = this.gridCells[gridY][gridX];
+    cell.setData('occupied', false);
+    cell.setData('tower', null);
+  }
+
   /**
-   * Returns the EnemySystem instance
+   * Returns to EnemySystem instance
    */
   public getEnemySystem(): EnemySystem {
     return this.enemySystem;

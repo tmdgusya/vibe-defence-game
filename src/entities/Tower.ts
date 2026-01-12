@@ -4,8 +4,10 @@ import { TowerData } from '../types';
 export class Tower extends Phaser.GameObjects.Container {
   private sprite!: Phaser.GameObjects.Image;
   private rangeIndicator!: Phaser.GameObjects.Graphics;
+  private mergeIndicator!: Phaser.GameObjects.Graphics;
   private towerData: TowerData;
   private rangeVisible: boolean = false;
+  private canMerge: boolean = false;
 
   constructor(scene: Phaser.Scene, data: TowerData) {
     const x = data.gridX * 80 + 40;
@@ -17,6 +19,7 @@ export class Tower extends Phaser.GameObjects.Container {
 
     this.createSprite();
     this.createRangeIndicator();
+    this.createMergeIndicator();
     this.setupInteractions();
 
     scene.add.existing(this);
@@ -25,8 +28,10 @@ export class Tower extends Phaser.GameObjects.Container {
   private createSprite(): void {
     const textureKey = this.getTextureKey();
 
-    this.sprite = this.scene.add.image(0, 0, textureKey);
+    // Use scene.make to create without auto-adding to scene
+    this.sprite = this.scene.make.image({ x: 0, y: 0, key: textureKey });
     this.sprite.setScale(0.8);
+    this.add(this.sprite); // Add to container, not scene
   }
 
   private createRangeIndicator(): void {
@@ -40,11 +45,29 @@ export class Tower extends Phaser.GameObjects.Container {
 
     const rangePixels = this.towerData.range * 80;
 
+    // Draw at tower's position in scene coordinates
     this.rangeIndicator.lineStyle(2, 0x4a90d9, 0.3);
-    this.rangeIndicator.strokeCircle(0, 0, rangePixels);
+    this.rangeIndicator.strokeCircle(this.x, this.y, rangePixels);
 
     this.rangeIndicator.fillStyle(0x4a90d9, 0.1);
-    this.rangeIndicator.fillCircle(0, 0, rangePixels);
+    this.rangeIndicator.fillCircle(this.x, this.y, rangePixels);
+  }
+
+  private createMergeIndicator(): void {
+    this.mergeIndicator = this.scene.add.graphics();
+    this.mergeIndicator.setVisible(false);
+    this.updateMergeIndicator();
+  }
+
+  private updateMergeIndicator(): void {
+    this.mergeIndicator.clear();
+
+    // Draw at tower's position in scene coordinates
+    this.mergeIndicator.lineStyle(4, 0xffd700, 0.8);
+    this.mergeIndicator.strokeCircle(this.x, this.y, 38);
+
+    this.mergeIndicator.fillStyle(0xffd700, 0.2);
+    this.mergeIndicator.fillCircle(this.x, this.y, 38);
   }
 
   private getTextureKey(): string {
@@ -82,6 +105,24 @@ export class Tower extends Phaser.GameObjects.Container {
     }
   }
 
+  public setCanMerge(canMerge: boolean): void {
+    this.canMerge = canMerge;
+
+    if (this.canMerge) {
+      this.showMergeIndicator();
+    } else {
+      this.hideMergeIndicator();
+    }
+  }
+
+  private showMergeIndicator(): void {
+    this.mergeIndicator.setVisible(true);
+  }
+
+  private hideMergeIndicator(): void {
+    this.mergeIndicator.setVisible(false);
+  }
+
   public getData(): TowerData {
     return { ...this.towerData };
   }
@@ -112,6 +153,7 @@ export class Tower extends Phaser.GameObjects.Container {
 
   public destroy(): void {
     this.rangeIndicator.destroy();
+    this.mergeIndicator.destroy();
     this.sprite.destroy();
     super.destroy();
   }
