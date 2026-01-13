@@ -150,6 +150,11 @@ vi.mock('phaser', () => {
         })),
       },
     },
+    Scale: {
+      FIT: 'FIT',
+      CENTER_BOTH: 'CENTER_BOTH',
+      RESIZE: 'RESIZE',
+    },
     Tweens: {
       TweenChain: MockTweenChain,
     },

@@ -124,9 +124,15 @@ const PhaserGame = forwardRef<PhaserGameRef>(function PhaserGame(_props, ref) {
     };
 
     // Enemy events
-    const handleEnemyKilled = (_data: GameEvents['enemyKilled']): void => {
-      useGameStore.getState().incrementEnemiesKilled();
-      // Gold reward is handled via goldChanged event from GameScene
+    const handleEnemyKilled = (data: GameEvents['enemyKilled']): void => {
+      const state = useGameStore.getState();
+
+      state.incrementEnemiesKilled();
+
+      const newGold = state.gold + data.reward;
+      state.setGold(newGold);
+
+      emitEvent('goldChanged', { gold: newGold, change: data.reward });
     };
 
     const handleEnemyReachedEnd = (
