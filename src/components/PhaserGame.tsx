@@ -129,6 +129,24 @@ const PhaserGame = forwardRef<PhaserGameRef>(function PhaserGame(_props, ref) {
       // Gold reward is handled via goldChanged event from GameScene
     };
 
+    const handleEnemyReachedEnd = (
+      data: GameEvents['enemyReachedEnd']
+    ): void => {
+      const state = useGameStore.getState();
+      const newLives = state.lives - data.damage;
+
+      // Update lives in store
+      state.setLives(newLives);
+
+      // Emit livesChanged event for UI updates
+      emitEvent('livesChanged', { lives: newLives, change: -data.damage });
+
+      // Check for game over condition
+      if (newLives <= 0) {
+        emitEvent('gameOver', { won: false, score: state.score });
+      }
+    };
+
     // Subscribe to all events
     subscribeToEvent('sceneReady', handleSceneReady);
     subscribeToEvent('towerPlaced', handleTowerPlaced);
@@ -140,6 +158,7 @@ const PhaserGame = forwardRef<PhaserGameRef>(function PhaserGame(_props, ref) {
     subscribeToEvent('waveStarted', handleWaveStarted);
     subscribeToEvent('waveCompleted', handleWaveCompleted);
     subscribeToEvent('enemyKilled', handleEnemyKilled);
+    subscribeToEvent('enemyReachedEnd', handleEnemyReachedEnd);
 
     return (): void => {
       unsubscribeFromEvent('sceneReady', handleSceneReady);
@@ -152,6 +171,7 @@ const PhaserGame = forwardRef<PhaserGameRef>(function PhaserGame(_props, ref) {
       unsubscribeFromEvent('waveStarted', handleWaveStarted);
       unsubscribeFromEvent('waveCompleted', handleWaveCompleted);
       unsubscribeFromEvent('enemyKilled', handleEnemyKilled);
+      unsubscribeFromEvent('enemyReachedEnd', handleEnemyReachedEnd);
     };
   }, []);
 
