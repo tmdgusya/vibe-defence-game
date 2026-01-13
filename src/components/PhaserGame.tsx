@@ -126,6 +126,10 @@ const PhaserGame = forwardRef<PhaserGameRef>(function PhaserGame(_props, ref) {
 
       state.setGold(newGold);
       emitEvent('goldChanged', { gold: newGold, change: data.bonus });
+
+      // Add wave completion score (wave × 50 points)
+      const wavePoints = data.wave * 50;
+      state.addScore(wavePoints);
     };
 
     // Enemy events
@@ -138,6 +142,18 @@ const PhaserGame = forwardRef<PhaserGameRef>(function PhaserGame(_props, ref) {
       state.setGold(newGold);
 
       emitEvent('goldChanged', { gold: newGold, change: data.reward });
+
+      // Add score based on enemy type
+      const scoreMap: Record<string, number> = {
+        basic: 10,
+        tank: 25,
+        flying: 20,
+        boss: 100,
+        swarm: 15,
+        armored: 30,
+      };
+      const points = scoreMap[data.enemy.type] || 10;
+      state.addScore(points);
     };
 
     const handleEnemyReachedEnd = (

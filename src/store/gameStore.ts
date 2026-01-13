@@ -44,6 +44,7 @@ interface GameState extends SessionState {
 interface GameActions {
   // Session actions
   setScore: (score: number) => void;
+  addScore: (points: number) => void;
   setLevel: (level: number) => void;
   setLives: (lives: number) => void;
   setPaused: (paused: boolean) => void;
@@ -112,6 +113,10 @@ export const useGameStore = create<GameState & GameActions>()(
 
         // Session setters
         setScore: (score) => set({ score }),
+        addScore: (points) =>
+          set((state) => ({
+            score: state.score + points,
+          })),
         setLevel: (level) => set({ level }),
         setLives: (lives) => set({ lives }),
         setPaused: (isPaused) => set({ isPaused }),
