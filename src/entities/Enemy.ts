@@ -219,7 +219,11 @@ export class Enemy extends Phaser.GameObjects.Container {
       damage: 1,
     });
 
-    this.destroy();
+    // Delay destroy to next tick to avoid race condition
+    // The TweenChain's complete callback must fully return before we destroy
+    this.scene.time.delayedCall(0, () => {
+      this.destroy();
+    });
   }
 
   public getData(): EnemyData {
