@@ -125,6 +125,7 @@ export type GameEventType =
   | 'enemySpawned'
   | 'enemyKilled'
   | 'enemyReachedEnd'
+  | 'startWaveRequested'
   | 'waveStarted'
   | 'waveCompleted'
   | 'goldChanged'
@@ -178,6 +179,7 @@ export interface GameEvents {
   enemyReachedEnd: { enemy: EnemyData; damage: number };
 
   // Wave events
+  startWaveRequested: { wave: number };
   waveStarted: { wave: number };
   waveCompleted: { wave: number; bonus: number };
 

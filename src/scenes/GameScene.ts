@@ -138,6 +138,15 @@ export default class GameScene extends Phaser.Scene {
       audioSystem.playSound('enemyDeath');
     });
 
+    subscribeToEvent(
+      'startWaveRequested',
+      (data: GameEvents['startWaveRequested']) => {
+        if (!this.enemySystem.isWaveInProgress()) {
+          this.enemySystem.startWave(data.wave);
+        }
+      }
+    );
+
     subscribeToEvent('waveStarted', () => {
       audioSystem.playSound('waveStart');
     });

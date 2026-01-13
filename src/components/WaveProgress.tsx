@@ -1,6 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useGameStore } from '../store/gameStore';
 import { useShallow } from 'zustand/react/shallow';
+import {
+  emitEvent,
+  subscribeToEvent,
+  unsubscribeFromEvent,
+} from '../utils/EventBus';
 
 interface WaveProgressProps {
   totalWaves?: number;
@@ -14,6 +19,32 @@ const WaveProgress: React.FC<WaveProgressProps> = ({ totalWaves = 10 }) => {
       isPaused: state.isPaused,
     }))
   );
+
+  const [isWaveActive, setIsWaveActive] = useState(false);
+
+  useEffect(() => {
+    const handleWaveStarted = (): void => {
+      setIsWaveActive(true);
+    };
+
+    const handleWaveCompleted = (): void => {
+      setIsWaveActive(false);
+    };
+
+    subscribeToEvent('waveStarted', handleWaveStarted);
+    subscribeToEvent('waveCompleted', handleWaveCompleted);
+
+    return () => {
+      unsubscribeFromEvent('waveStarted', handleWaveStarted);
+      unsubscribeFromEvent('waveCompleted', handleWaveCompleted);
+    };
+  }, []);
+
+  const handleStartWave = (): void => {
+    if (!isWaveActive && !isPaused) {
+      emitEvent('startWaveRequested', { wave });
+    }
+  };
 
   const progressPercentage = totalWaves > 0 ? (wave / totalWaves) * 100 : 0;
 
@@ -50,6 +81,24 @@ const WaveProgress: React.FC<WaveProgressProps> = ({ totalWaves = 10 }) => {
       <div className="mt-2 flex justify-between text-xs text-gray-400">
         <span>Wave Start</span>
         <span>Level Complete</span>
+      </div>
+
+      <button
+        onClick={handleStartWave}
+        disabled={isWaveActive || isPaused}
+        className={`
+          w-full mt-4 py-3 rounded-lg font-bold text-lg transition-all duration-200
+          ${
+            isWaveActive || isPaused
+              ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+              : 'bg-green-600 hover:bg-green-500 text-white cursor-pointer shadow-lg hover:shadow-green-500/25'
+          }
+        `}
+      >
+        {isWaveActive ? `Wave ${wave} in Progress...` : `Start Wave ${wave}`}
+      </button>
+      <div className="mt-1 text-center text-xs text-gray-500">
+        or press SPACE
       </div>
     </div>
   );
