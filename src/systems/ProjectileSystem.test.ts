@@ -83,7 +83,9 @@ vi.mock('../scenes/GameScene', () => ({
     getPlacedTowers: vi.fn(() => []),
     getEnemySystem: vi.fn(() => ({
       getActiveEnemies: vi.fn(() => []),
+      isWaveInProgress: vi.fn(() => true),
     })),
+    getGold: vi.fn(() => 200),
   })),
 }));
 
@@ -127,6 +129,7 @@ describe('ProjectileSystem', () => {
       vi.mocked(mockScene.getPlacedTowers).mockReturnValue([mockTower as any]);
       vi.mocked(mockScene.getEnemySystem).mockReturnValue({
         getActiveEnemies: vi.fn(() => [mockEnemy as any]),
+        isWaveInProgress: vi.fn(() => true),
       } as any);
 
       projectileSystem.update(1000, 16);
@@ -141,6 +144,7 @@ describe('ProjectileSystem', () => {
       vi.mocked(mockScene.getPlacedTowers).mockReturnValue([mockTower as any]);
       vi.mocked(mockScene.getEnemySystem).mockReturnValue({
         getActiveEnemies: vi.fn(() => [mockEnemy as any]),
+        isWaveInProgress: vi.fn(() => true),
       } as any);
 
       projectileSystem.update(1000, 16);
@@ -155,6 +159,7 @@ describe('ProjectileSystem', () => {
       vi.mocked(mockScene.getPlacedTowers).mockReturnValue([mockTower as any]);
       vi.mocked(mockScene.getEnemySystem).mockReturnValue({
         getActiveEnemies: vi.fn(() => [mockEnemy as any]),
+        isWaveInProgress: vi.fn(() => true),
       } as any);
 
       // First attack at time 1000
@@ -181,6 +186,7 @@ describe('ProjectileSystem', () => {
       ]);
       vi.mocked(mockScene.getEnemySystem).mockReturnValue({
         getActiveEnemies: vi.fn(() => [mockEnemy as any]),
+        isWaveInProgress: vi.fn(() => true),
       } as any);
 
       projectileSystem.update(1000, 16);
@@ -199,6 +205,7 @@ describe('ProjectileSystem', () => {
       vi.mocked(mockScene.getPlacedTowers).mockReturnValue([mockTower as any]);
       vi.mocked(mockScene.getEnemySystem).mockReturnValue({
         getActiveEnemies: vi.fn(() => [farEnemy as any, closeEnemy as any]),
+        isWaveInProgress: vi.fn(() => true),
       } as any);
 
       projectileSystem.update(1000, 16);
@@ -214,6 +221,7 @@ describe('ProjectileSystem', () => {
       vi.mocked(mockScene.getPlacedTowers).mockReturnValue([mockTower as any]);
       vi.mocked(mockScene.getEnemySystem).mockReturnValue({
         getActiveEnemies: vi.fn(() => [inactiveEnemy as any]),
+        isWaveInProgress: vi.fn(() => true),
       } as any);
 
       projectileSystem.update(1000, 16);
@@ -236,6 +244,7 @@ describe('ProjectileSystem', () => {
       vi.mocked(mockScene.getPlacedTowers).mockReturnValue([mockTower as any]);
       vi.mocked(mockScene.getEnemySystem).mockReturnValue({
         getActiveEnemies: vi.fn(() => [mockEnemy as any]),
+        isWaveInProgress: vi.fn(() => true),
       } as any);
 
       // Fire once

@@ -745,6 +745,13 @@ export default class GameScene extends Phaser.Scene {
   }
 
   /**
+   * Returns current gold amount
+   */
+  public getGold(): number {
+    return this.currentGold;
+  }
+
+  /**
    * Returns all placed towers on the grid
    */
   public getPlacedTowers(): Tower[] {

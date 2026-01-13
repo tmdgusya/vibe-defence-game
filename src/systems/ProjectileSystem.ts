@@ -12,6 +12,7 @@ export class ProjectileSystem {
   private scene: GameScene;
   private activeProjectiles: Set<Projectile> = new Set();
   private towerCooldowns: Map<Tower, number> = new Map();
+  private sunflowerTimers: Map<Tower, number> = new Map();
 
   constructor(scene: GameScene) {
     this.scene = scene;
@@ -21,11 +22,52 @@ export class ProjectileSystem {
     // Process tower attacks
     this.processTowerAttacks(time);
 
+    // Process sunflower resource generation
+    this.processSunflowerGeneration(time);
+
     // Update all active projectiles
     this.updateProjectiles();
 
     // Clean up destroyed projectiles
     this.cleanupProjectiles();
+  }
+
+  private processSunflowerGeneration(time: number): void {
+    // Only generate resources during active waves
+    if (!this.scene.getEnemySystem().isWaveInProgress()) return;
+
+    const towers = this.scene.getPlacedTowers();
+
+    for (const tower of towers) {
+      const towerData = tower.getData();
+
+      // Only process sunflowers
+      if (towerData.type !== TowerType.SUNFLOWER) continue;
+
+      // Check if tower has resource generation configured
+      if (!towerData.resourceGeneration || !towerData.resourceInterval)
+        continue;
+
+      // Check timer
+      const lastGeneration = this.sunflowerTimers.get(tower) || 0;
+
+      if (time - lastGeneration >= towerData.resourceInterval) {
+        // Generate resources
+        const goldToAdd = towerData.resourceGeneration;
+
+        // Update timer
+        this.sunflowerTimers.set(tower, time);
+
+        // Play generation animation
+        tower.playAttackAnimation();
+
+        // Emit gold changed event
+        emitEvent('goldChanged', {
+          gold: this.scene.getGold() + goldToAdd,
+          change: goldToAdd,
+        });
+      }
+    }
   }
 
   private processTowerAttacks(time: number): void {
@@ -153,10 +195,12 @@ export class ProjectileSystem {
 
   public removeTowerFromTracking(tower: Tower): void {
     this.towerCooldowns.delete(tower);
+    this.sunflowerTimers.delete(tower);
   }
 
   public destroy(): void {
     this.clearAllProjectiles();
     this.towerCooldowns.clear();
+    this.sunflowerTimers.clear();
   }
 }

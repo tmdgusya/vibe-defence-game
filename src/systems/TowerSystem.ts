@@ -9,6 +9,8 @@ interface TowerStats {
   splashDamage?: number;
   splashRadius?: number;
   pierceCount?: number;
+  resourceGeneration?: number; // Gold generated per interval
+  resourceInterval?: number; // Interval in milliseconds
 }
 
 interface TowerConfiguration {
@@ -61,18 +63,24 @@ const TOWER_CONFIG: TowerConfiguration = {
       attackSpeed: 0,
       range: 1,
       cost: 50,
+      resourceGeneration: 5, // 5 gold
+      resourceInterval: 10000, // every 10 seconds
     },
     [TowerLevel.ADVANCED]: {
       damage: 0,
       attackSpeed: 0,
       range: 1.2,
       cost: 85,
+      resourceGeneration: 8, // 8 gold
+      resourceInterval: 8000, // every 8 seconds
     },
     [TowerLevel.ELITE]: {
       damage: 0,
       attackSpeed: 0,
       range: 1.44,
       cost: 120,
+      resourceGeneration: 12, // 12 gold
+      resourceInterval: 6000, // every 6 seconds
     },
   },
   [TowerType.WALLNUT]: {

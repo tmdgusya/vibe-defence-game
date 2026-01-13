@@ -78,6 +78,8 @@ export interface TowerData {
   splashDamage?: number;
   splashRadius?: number;
   pierceCount?: number;
+  resourceGeneration?: number; // Gold generated per interval
+  resourceInterval?: number; // Interval in milliseconds
 }
 
 // Enemy data
