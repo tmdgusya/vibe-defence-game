@@ -39,6 +39,13 @@ const TOWER_OPTIONS: TowerOption[] = [
     description: 'Shoots projectiles',
     icon: '🌱',
   },
+  {
+    type: TowerType.MORTAR,
+    name: 'Mortar',
+    cost: 175,
+    description: 'Area damage with splash effect',
+    icon: '💣',
+  },
 ];
 
 const TowerSelectionPanel: React.FC = () => {
