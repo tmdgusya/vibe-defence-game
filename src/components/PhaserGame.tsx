@@ -120,7 +120,12 @@ const PhaserGame = forwardRef<PhaserGameRef>(function PhaserGame(_props, ref) {
 
     const handleWaveCompleted = (data: GameEvents['waveCompleted']): void => {
       console.log(`Wave ${data.wave} completed, bonus: ${data.bonus}`);
-      // Wave number will be updated when next wave starts
+
+      const state = useGameStore.getState();
+      const newGold = state.gold + data.bonus;
+
+      state.setGold(newGold);
+      emitEvent('goldChanged', { gold: newGold, change: data.bonus });
     };
 
     // Enemy events
