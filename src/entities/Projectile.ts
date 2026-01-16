@@ -63,9 +63,7 @@ export class Projectile extends Phaser.GameObjects.Container {
   public update(): void {
     if (this.isDestroyed) return;
 
-    // Check if target is still valid
     if (!this.target || !this.target.active) {
-      // Target is dead - destroy projectile immediately
       this.destroy();
       return;
     }
