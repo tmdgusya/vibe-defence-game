@@ -118,7 +118,6 @@ export const TowerSelectionPanel: React.FC = () => {
             name={tower.name}
             cost={tower.cost}
             description={tower.description}
-            icon={tower.icon}
             affordable={canAfford(tower.cost)}
             selected={selectedTowerType === tower.type}
             onSelect={() => handleSelectTower(tower.type)}
