@@ -21,8 +21,9 @@ describe('Button Component', () => {
       const button = container.firstChild as HTMLButtonElement;
 
       // Check inline style instead of class for gradient backgrounds
+      // Browsers convert hex to RGB: #3498DB -> rgb(52, 152, 219)
       expect(button.style.background).toContain('linear-gradient');
-      expect(button.style.background).toContain('#3498DB'); // Primary gradient color
+      expect(button.style.background).toContain('rgb(52, 152, 219)');
     });
 
     it('should apply success variant', async () => {
@@ -31,8 +32,9 @@ describe('Button Component', () => {
       const button = container.firstChild as HTMLButtonElement;
 
       // Check inline style for success gradient
+      // Browsers convert hex to RGB: #27AE60 -> rgb(39, 174, 96)
       expect(button.style.background).toContain('linear-gradient');
-      expect(button.style.background).toContain('#27AE60'); // Success gradient color
+      expect(button.style.background).toContain('rgb(39, 174, 96)');
     });
 
     it('should apply warning variant', async () => {
@@ -41,8 +43,9 @@ describe('Button Component', () => {
       const button = container.firstChild as HTMLButtonElement;
 
       // Check inline style for warning gradient
+      // Browsers convert hex to RGB: #F39C12 -> rgb(243, 156, 18)
       expect(button.style.background).toContain('linear-gradient');
-      expect(button.style.background).toContain('#F39C12'); // Warning gradient color
+      expect(button.style.background).toContain('rgb(243, 156, 18)');
     });
 
     it('should apply danger variant', async () => {
@@ -51,8 +54,9 @@ describe('Button Component', () => {
       const button = container.firstChild as HTMLButtonElement;
 
       // Check inline style for danger gradient
+      // Browsers convert hex to RGB: #E74C3C -> rgb(231, 76, 60)
       expect(button.style.background).toContain('linear-gradient');
-      expect(button.style.background).toContain('#E74C3C'); // Danger gradient color
+      expect(button.style.background).toContain('rgb(231, 76, 60)');
     });
 
     it('should apply ghost variant', async () => {

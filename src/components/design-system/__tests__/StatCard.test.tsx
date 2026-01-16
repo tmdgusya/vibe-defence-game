@@ -26,7 +26,8 @@ describe('StatCard Component', () => {
       const card = container.firstChild as HTMLElement;
 
       // StatCard uses inline styles for backgrounds
-      expect(card.style.background).toBe('#FFF9E6'); // Default variant uses solid color
+      // Browsers convert hex to RGB: #FFF9E6 -> rgb(255, 249, 230)
+      expect(card.style.background).toBe('rgb(255, 249, 230)');
       expect(card.className).toContain('rounded-card');
       expect(card.className).toContain('p-card');
     });
@@ -39,8 +40,9 @@ describe('StatCard Component', () => {
       const card = container.firstChild as HTMLElement;
 
       // Gold variant uses gradient background
+      // Browsers convert hex to RGB: #FFC107 -> rgb(255, 193, 7)
       expect(card.style.background).toContain('linear-gradient');
-      expect(card.style.background).toContain('#FFC107');
+      expect(card.style.background).toContain('rgb(255, 193, 7)');
       expect(card.className).toContain('rounded-card');
     });
 
@@ -52,8 +54,9 @@ describe('StatCard Component', () => {
       const card = container.firstChild as HTMLElement;
 
       // Success variant uses gradient background
+      // Browsers convert hex to RGB: #27AE60 -> rgb(39, 174, 96)
       expect(card.style.background).toContain('linear-gradient');
-      expect(card.style.background).toContain('#27AE60');
+      expect(card.style.background).toContain('rgb(39, 174, 96)');
       expect(card.className).toContain('rounded-card');
     });
 
@@ -65,8 +68,9 @@ describe('StatCard Component', () => {
       const card = container.firstChild as HTMLElement;
 
       // Danger variant uses gradient background
+      // Browsers convert hex to RGB: #E74C3C -> rgb(231, 76, 60)
       expect(card.style.background).toContain('linear-gradient');
-      expect(card.style.background).toContain('#E74C3C');
+      expect(card.style.background).toContain('rgb(231, 76, 60)');
       expect(card.className).toContain('rounded-card');
     });
 
@@ -78,8 +82,9 @@ describe('StatCard Component', () => {
       const card = container.firstChild as HTMLElement;
 
       // Info variant uses gradient background
+      // Browsers convert hex to RGB: #3498DB -> rgb(52, 152, 219)
       expect(card.style.background).toContain('linear-gradient');
-      expect(card.style.background).toContain('#3498DB');
+      expect(card.style.background).toContain('rgb(52, 152, 219)');
       expect(card.className).toContain('rounded-card');
     });
 
@@ -91,7 +96,8 @@ describe('StatCard Component', () => {
       const card = container.firstChild as HTMLElement;
 
       // Default variant uses solid background
-      expect(card.style.background).toBe('#FFF9E6');
+      // Browsers convert hex to RGB: #FFF9E6 -> rgb(255, 249, 230)
+      expect(card.style.background).toBe('rgb(255, 249, 230)');
       expect(screen.getByText('Test')).toBeInTheDocument();
       expect(screen.getByText('123')).toBeInTheDocument();
     });
