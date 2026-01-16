@@ -2,19 +2,19 @@
  * Core type definitions for the Defence Game
  */
 
-// Grid configuration
+// Grid configuration - BIGGER BOARD!
 export const GRID_CONFIG = {
   ROWS: 5,
   COLS: 9,
-  CELL_SIZE: 80,
-  WIDTH: 720, // 9 * 80
-  HEIGHT: 400, // 5 * 80
+  CELL_SIZE: 120, // Increased from 80 to 120
+  WIDTH: 1080, // 9 * 120
+  HEIGHT: 600, // 5 * 120
 } as const;
 
-// Game dimensions
+// Game dimensions - BIGGER GAME!
 export const GAME_CONFIG = {
-  WIDTH: 720,
-  HEIGHT: 400,
+  WIDTH: 1080, // 50% bigger!
+  HEIGHT: 600, // 50% bigger!
   FPS: 60,
 } as const;
 

@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { useShallow } from 'zustand/react/shallow';
+import React, { useState, useEffect } from 'react';
 import { TowerType } from '../types';
+import { TowerButton } from './design-system/TowerButton';
+import { useShallow } from 'zustand/react/shallow';
 import { useGameStore } from '../store/gameStore';
+import { Panel, Text } from './design-system';
 import {
   subscribeToEvent,
   unsubscribeFromEvent,
@@ -48,8 +50,7 @@ const TOWER_OPTIONS: TowerOption[] = [
   },
 ];
 
-const TowerSelectionPanel: React.FC = () => {
-  // Use shallow comparison to prevent unnecessary re-renders
+export const TowerSelectionPanel: React.FC = () => {
   const { gold, selectedTowerType, selectTowerType } = useGameStore(
     useShallow((state) => ({
       gold: state.gold,
@@ -57,6 +58,7 @@ const TowerSelectionPanel: React.FC = () => {
       selectTowerType: state.selectTowerType,
     }))
   );
+
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -71,14 +73,6 @@ const TowerSelectionPanel: React.FC = () => {
       unsubscribeFromEvent('placementFailed', handlePlacementFailed);
     };
   }, []);
-
-  const handleSelectTower = (type: TowerType) => {
-    if (selectedTowerType === type) {
-      selectTowerType(null);
-    } else {
-      selectTowerType(type);
-    }
-  };
 
   const handleDragStart = (e: React.DragEvent, type: TowerType) => {
     e.dataTransfer.effectAllowed = 'copy';
@@ -96,59 +90,44 @@ const TowerSelectionPanel: React.FC = () => {
 
   const canAfford = (cost: number) => gold >= cost;
 
+  const handleSelectTower = (type: TowerType) => {
+    if (selectedTowerType === type) {
+      selectTowerType(null);
+    } else {
+      selectTowerType(type);
+    }
+  };
+
   return (
-    <div className="bg-gray-800 p-4 rounded-lg w-48 flex flex-col">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-white font-bold">Towers</h3>
-        <span className="text-yellow-400 font-bold">{gold}g</span>
-      </div>
+    <Panel>
+      <Text as="h3" variant="heading" className="mb-2">
+        Towers
+      </Text>
 
       {errorMessage && (
-        <div className="bg-red-600 text-white p-2 rounded mb-2 text-sm text-center">
+        <div className="bg-feedback-error text-white p-2 rounded mb-2 text-sm text-center">
           {errorMessage}
         </div>
       )}
 
-      <div className="flex flex-col space-y-2">
-        {TOWER_OPTIONS.map((tower) => {
-          const affordable = canAfford(tower.cost);
-          const isSelected = selectedTowerType === tower.type;
-
-          return (
-            <button
-              key={tower.type}
-              onClick={() => handleSelectTower(tower.type)}
-              onDragStart={(e) => handleDragStart(e, tower.type)}
-              onDragEnd={handleDragEnd}
-              draggable={affordable}
-              disabled={!affordable}
-              className={`
-                p-3 rounded-lg transition-all flex items-center gap-3
-                ${isSelected ? 'bg-blue-600 ring-2 ring-blue-400' : 'bg-gray-700'}
-                ${!affordable ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-600'}
-              `}
-              title={tower.description}
-            >
-              <span className="text-2xl">{tower.icon}</span>
-              <div className="flex flex-col items-start">
-                <span className="text-white text-sm">{tower.name}</span>
-                <span
-                  className={`text-sm ${affordable ? 'text-yellow-400' : 'text-red-400'}`}
-                >
-                  {tower.cost}g
-                </span>
-              </div>
-            </button>
-          );
-        })}
+      <div className="flex flex-col gap-3 overflow-y-auto">
+        {TOWER_OPTIONS.map((tower) => (
+          <TowerButton
+            key={tower.type}
+            towerType={tower.type}
+            name={tower.name}
+            cost={tower.cost}
+            description={tower.description}
+            icon={tower.icon}
+            affordable={canAfford(tower.cost)}
+            selected={selectedTowerType === tower.type}
+            onSelect={() => handleSelectTower(tower.type)}
+            onDragStart={(e) => handleDragStart(e, tower.type)}
+            onDragEnd={handleDragEnd}
+          />
+        ))}
       </div>
-
-      <div className="mt-4 text-gray-400 text-xs">
-        {selectedTowerType
-          ? 'Click on grid or drag tower to place'
-          : 'Click to select or drag tower to place'}
-      </div>
-    </div>
+    </Panel>
   );
 };
 

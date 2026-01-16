@@ -1,3 +1,6 @@
+/* Import Fonts - Cartoon & Playful! */
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;900&family=Press+Start+2P&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,36 +12,245 @@
 }
 
 html,
-body,
-#root {
+body {
   width: 100%;
   height: 100%;
   overflow: hidden;
 }
 
+/* Vibrant Sky Gradient Background! */
 body {
-  background-color: #1a1a2e;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(180deg, #87ceeb 0%, #b0e0e6 50%, #e0f6ff 100%);
+  font-family: 'Nunito', 'Arial Rounded MT Bold', sans-serif;
+  color: #2d1b00;
+  position: relative;
 }
 
-/* Game container styling */
-.game-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  padding: 1rem;
+/* Add subtle clouds texture */
+body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image:
+    radial-gradient(
+      circle at 20% 50%,
+      rgba(255, 255, 255, 0.3) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 60% 20%,
+      rgba(255, 255, 255, 0.2) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 70%,
+      rgba(255, 255, 255, 0.25) 0%,
+      transparent 50%
+    );
+  pointer-events: none;
+  z-index: 0;
 }
 
-/* Phaser canvas container */
+#root {
+  /* Panel Colors - Bright & Warm */
+  --color-panel-primary: #fff9e6;
+  --color-panel-hover: #fff4d6;
+  --color-panel-active: #ffefc6;
+  --color-panel-border: #8b6914;
+  --color-panel-accent: #ffd700;
+
+  /* Text Colors - Dark & Readable */
+  --color-text-primary: #2d1b00;
+  --color-text-secondary: #5c4a26;
+  --color-text-muted: #8b7355;
+  --color-text-accent: #ff6b35;
+
+  /* Gold Colors - Shiny! */
+  --color-gold-primary: #ffd700;
+  --color-gold-secondary: #ffa500;
+  --color-gold-glow: rgba(255, 215, 0, 0.6);
+
+  /* Interactive Colors - Bright Gradients */
+  --color-interactive-primary: #3498db;
+  --color-interactive-primary-hover: #5dade2;
+  --color-interactive-primary-active: #2980b9;
+  --color-interactive-primary-border: #1f618d;
+
+  --color-interactive-success: #27ae60;
+  --color-interactive-success-hover: #58d68d;
+  --color-interactive-success-active: #1e8449;
+  --color-interactive-success-border: #1e8449;
+
+  --color-interactive-warning: #f39c12;
+  --color-interactive-warning-hover: #f5b041;
+  --color-interactive-warning-active: #d68910;
+  --color-interactive-warning-border: #b9770e;
+
+  --color-interactive-danger: #e74c3c;
+  --color-interactive-danger-hover: #ec7063;
+  --color-interactive-danger-active: #c0392b;
+  --color-interactive-danger-border: #a93226;
+
+  --color-interactive-disabled: #bdc3c7;
+  --color-interactive-disabled-border: #95a5a6;
+
+  /* Tower Colors - Vibrant! */
+  --color-tower-peashooter: #7ec850;
+  --color-tower-peashooter-border: #4a7c28;
+  --color-tower-sunflower: #ffd93d;
+  --color-tower-sunflower-border: #f57f17;
+  --color-tower-wallnut: #b8860b;
+  --color-tower-wallnut-border: #654321;
+  --color-tower-mortar: #ff6b6b;
+  --color-tower-mortar-border: #c0392b;
+
+  /* Feedback Colors */
+  --color-feedback-success: #2ecc71;
+  --color-feedback-error: #e74c3c;
+  --color-feedback-warning: #f39c12;
+  --color-feedback-info: #3498db;
+  --color-feedback-highlight: #ffeb3b;
+
+  /* Level Colors */
+  --color-level-basic: #95a5a6;
+  --color-level-advanced: #3498db;
+  --color-level-elite: #9b59b6;
+
+  /* Typography */
+  --font-heading: 'Fredoka One', 'Comic Sans MS', cursive;
+  --font-body: 'Nunito', 'Arial Rounded MT Bold', sans-serif;
+  --font-mono: 'Press Start 2P', 'Courier New', monospace;
+
+  /* Spacing - More Generous */
+  --spacing-panel-padding: 1.5rem;
+  --spacing-panel-padding-large: 2rem;
+  --spacing-panel-gap: 1.5rem;
+  --spacing-panel-border-radius: 1.25rem;
+  --spacing-button-padding-x: 1.5rem;
+  --spacing-button-padding-y: 1rem;
+  --spacing-button-border-radius: 999px;
+  --spacing-card-padding: 1rem;
+  --spacing-card-border-radius: 1rem;
+
+  /* Shadows - Cartoon Style */
+  --shadow-panel:
+    0 8px 0 rgba(139, 105, 20, 0.4), 0 10px 25px rgba(0, 0, 0, 0.15);
+  --shadow-button: 0 6px 0 currentColor, 0 8px 12px rgba(0, 0, 0, 0.3);
+  --shadow-button-pressed: 0 2px 0 currentColor, 0 3px 6px rgba(0, 0, 0, 0.3);
+  --shadow-cartoon: 6px 6px 0 rgba(0, 0, 0, 0.2);
+  --shadow-glow-gold:
+    0 0 20px rgba(255, 217, 0, 0.8), 0 0 40px rgba(255, 217, 0, 0.4);
+  --shadow-glow-success: 0 0 20px rgba(126, 200, 80, 0.6);
+  --shadow-glow-danger: 0 0 20px rgba(255, 107, 107, 0.6);
+  --shadow-glow-primary: 0 0 20px rgba(52, 152, 219, 0.6);
+
+  /* Transitions - Bouncy */
+  --transition-fast: 200ms;
+  --transition-normal: 350ms;
+  --transition-slow: 500ms;
+
+  position: relative;
+  z-index: 1;
+}
+
+/* Phaser canvas container - Cartoon Border */
 #phaser-container {
-  border: 3px solid #4a90d9;
-  border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(74, 144, 217, 0.3);
+  border: 4px solid #3498db;
+  border-radius: 1.25rem;
+  box-shadow:
+    0 0 0 4px #ffffff,
+    0 8px 0 #1f618d,
+    0 10px 25px rgba(0, 0, 0, 0.2);
   overflow: hidden;
+  background: #87ceeb;
 }
 
 #phaser-container canvas {
   display: block;
+}
+
+/* Make headings bold and cartoon-y */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Fredoka One', 'Comic Sans MS', cursive;
+  font-weight: 900;
+  color: #2d1b00;
+  text-shadow: 2px 2px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* Scrollbar styling - Cartoon themed */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #e0f6ff;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #7ec850 0%, #5fa830 100%);
+  border-radius: 10px;
+  border: 2px solid #4a7c28;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #a8e063 0%, #7ec850 100%);
+}
+
+/* Add playful cursor */
+* {
+  cursor: default;
+}
+
+button,
+a,
+[role='button'] {
+  cursor: pointer;
+}
+
+/* Disable text selection for game feel */
+body {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Add subtle animation to panels on load */
+@keyframes panelSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Utility class for gold text with glow */
+.text-gold-glow {
+  color: #ffd700;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+  animation: goldPulse 2s ease-in-out infinite;
+}
+
+@keyframes goldPulse {
+  0%,
+  100% {
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+    transform: scale(1);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(255, 215, 0, 1);
+    transform: scale(1.05);
+  }
 }

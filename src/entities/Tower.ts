@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { TowerData } from '../types';
+import { TowerData, GRID_CONFIG } from '../types';
 
 export class Tower extends Phaser.GameObjects.Container {
   private sprite!: Phaser.GameObjects.Image;
@@ -10,8 +10,8 @@ export class Tower extends Phaser.GameObjects.Container {
   private canMerge: boolean = false;
 
   constructor(scene: Phaser.Scene, data: TowerData) {
-    const x = data.gridX * 80 + 40;
-    const y = data.gridY * 80 + 40;
+    const x = data.gridX * GRID_CONFIG.CELL_SIZE + GRID_CONFIG.CELL_SIZE / 2;
+    const y = data.gridY * GRID_CONFIG.CELL_SIZE + GRID_CONFIG.CELL_SIZE / 2;
 
     super(scene, x, y);
 
@@ -43,7 +43,7 @@ export class Tower extends Phaser.GameObjects.Container {
   private updateRangeIndicator(): void {
     this.rangeIndicator.clear();
 
-    const rangePixels = this.towerData.range * 80;
+    const rangePixels = this.towerData.range * GRID_CONFIG.CELL_SIZE;
 
     // Draw at tower's position in scene coordinates
     this.rangeIndicator.lineStyle(2, 0x4a90d9, 0.3);
@@ -62,12 +62,14 @@ export class Tower extends Phaser.GameObjects.Container {
   private updateMergeIndicator(): void {
     this.mergeIndicator.clear();
 
+    const mergeRadius = GRID_CONFIG.CELL_SIZE * 0.48; // Slightly less than half cell size
+
     // Draw at tower's position in scene coordinates
     this.mergeIndicator.lineStyle(4, 0xffd700, 0.8);
-    this.mergeIndicator.strokeCircle(this.x, this.y, 38);
+    this.mergeIndicator.strokeCircle(this.x, this.y, mergeRadius);
 
     this.mergeIndicator.fillStyle(0xffd700, 0.2);
-    this.mergeIndicator.fillCircle(this.x, this.y, 38);
+    this.mergeIndicator.fillCircle(this.x, this.y, mergeRadius);
   }
 
   private getTextureKey(): string {

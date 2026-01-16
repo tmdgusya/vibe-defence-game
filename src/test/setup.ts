@@ -1,5 +1,6 @@
 /* eslint-disable no-undef, no-magic-numbers */
 import { vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 
 // Mock Phaser Vector2 class
 class MockVector2 {

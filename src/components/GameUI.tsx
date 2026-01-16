@@ -4,7 +4,6 @@ import Header from './Header';
 import Footer from './Footer';
 import PhaserGame from './PhaserGame';
 import TowerSelectionPanel from './TowerSelectionPanel';
-import TowerPanel from './TowerPanel';
 import PauseMenu from './PauseMenu';
 import GameOverScreen from './GameOverScreen';
 import WaveProgress from './WaveProgress';
@@ -38,7 +37,6 @@ const GameUI: React.FC = () => {
     }))
   );
   const [gameState, setGameState] = useState<GameState>('playing');
-  const [showTowerPanel, setShowTowerPanel] = useState(false);
 
   useGameLoop();
   useKeyboardControls();
@@ -84,25 +82,18 @@ const GameUI: React.FC = () => {
         isPaused={isPaused}
       />
 
-      <main className="flex-1 container mx-auto py-4 px-2 md:px-4">
-        <div className="flex flex-col md:flex-row justify-center items-start gap-4">
-          <div className="flex flex-col gap-4 w-full md:w-64 order-2 md:order-1">
+      <main className="flex-1 container mx-auto max-w-[1800px] py-4 px-2 md:px-6">
+        <div className="flex flex-col lg:flex-row justify-center items-start gap-6">
+          {/* LEFT SIDEBAR - Narrower */}
+          <div className="flex flex-col gap-4 w-full lg:w-72 order-2 lg:order-1">
             <TowerSelectionPanel />
-            {showTowerPanel && <TowerPanel />}
             <WaveProgress />
-            <GameStats />
           </div>
-          <div className="flex-1 order-1 md:order-2">
+
+          {/* CENTER - Game Board + Stats Below */}
+          <div className="flex flex-col gap-4 flex-shrink-0 order-1 lg:order-2">
             <PhaserGame />
-          </div>
-          <div className="hidden md:flex w-8 order-3">
-            <button
-              onClick={() => setShowTowerPanel(!showTowerPanel)}
-              className="bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-l-lg transition-colors"
-              title={showTowerPanel ? 'Hide Tower Panel' : 'Show Tower Panel'}
-            >
-              {showTowerPanel ? '◀' : '▶'}
-            </button>
+            <GameStats />
           </div>
         </div>
       </main>
