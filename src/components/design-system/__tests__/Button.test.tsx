@@ -20,7 +20,9 @@ describe('Button Component', () => {
       const { container } = render(<Button>Primary</Button>);
       const button = container.firstChild as HTMLButtonElement;
 
-      expect(button.className).toContain('bg-interactive-primary');
+      // Check inline style instead of class for gradient backgrounds
+      expect(button.style.background).toContain('linear-gradient');
+      expect(button.style.background).toContain('#3498DB'); // Primary gradient color
     });
 
     it('should apply success variant', async () => {
@@ -28,7 +30,9 @@ describe('Button Component', () => {
       const { container } = render(<Button variant="success">Success</Button>);
       const button = container.firstChild as HTMLButtonElement;
 
-      expect(button.className).toContain('bg-interactive-success');
+      // Check inline style for success gradient
+      expect(button.style.background).toContain('linear-gradient');
+      expect(button.style.background).toContain('#27AE60'); // Success gradient color
     });
 
     it('should apply warning variant', async () => {
@@ -36,7 +40,9 @@ describe('Button Component', () => {
       const { container } = render(<Button variant="warning">Warning</Button>);
       const button = container.firstChild as HTMLButtonElement;
 
-      expect(button.className).toContain('bg-interactive-warning');
+      // Check inline style for warning gradient
+      expect(button.style.background).toContain('linear-gradient');
+      expect(button.style.background).toContain('#F39C12'); // Warning gradient color
     });
 
     it('should apply danger variant', async () => {
@@ -44,7 +50,9 @@ describe('Button Component', () => {
       const { container } = render(<Button variant="danger">Danger</Button>);
       const button = container.firstChild as HTMLButtonElement;
 
-      expect(button.className).toContain('bg-interactive-danger');
+      // Check inline style for danger gradient
+      expect(button.style.background).toContain('linear-gradient');
+      expect(button.style.background).toContain('#E74C3C'); // Danger gradient color
     });
 
     it('should apply ghost variant', async () => {
@@ -52,9 +60,9 @@ describe('Button Component', () => {
       const { container } = render(<Button variant="ghost">Ghost</Button>);
       const button = container.firstChild as HTMLButtonElement;
 
-      expect(button.className).toContain('bg-transparent');
-      expect(button.className).toContain('hover:bg-panel-hover');
-      expect(button.className).toContain('text-text-secondary');
+      // Ghost variant uses transparent background, not gradient
+      expect(button.className).toContain('text-text-primary'); // Now text is primary color
+      expect(button.style.background).toBe('transparent');
     });
 
     it('should apply disabled state', async () => {

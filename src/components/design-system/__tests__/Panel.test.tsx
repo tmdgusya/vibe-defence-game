@@ -18,8 +18,8 @@ describe('Panel Component', () => {
       const { container } = render(<Panel>Content</Panel>);
       const panel = container.firstChild as HTMLElement;
 
-      expect(panel.className).toContain('bg-panel-primary');
-      expect(panel.className).toContain('border');
+      expect(panel.className).toContain('bg-gradient-panel'); // Uses gradient background
+      expect(panel.className).toContain('border-panel');
       expect(panel.className).toContain('rounded-panel');
       expect(panel.className).toContain('p-panel');
     });
@@ -48,7 +48,7 @@ describe('Panel Component', () => {
       );
       const panel = container.firstChild as HTMLElement;
 
-      expect(panel.className).toContain('bg-panel-primary');
+      expect(panel.className).toContain('bg-gradient-panel'); // Uses gradient background
       expect(panel.className).toContain('custom-class');
     });
   });

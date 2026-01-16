@@ -25,8 +25,9 @@ describe('StatCard Component', () => {
       );
       const card = container.firstChild as HTMLElement;
 
-      expect(card.className).toContain('bg-panel-primary');
-      expect(card.className).toContain('rounded-panel');
+      // StatCard uses inline styles for backgrounds
+      expect(card.style.background).toBe('#FFF9E6'); // Default variant uses solid color
+      expect(card.className).toContain('rounded-card');
       expect(card.className).toContain('p-card');
     });
 
@@ -37,8 +38,10 @@ describe('StatCard Component', () => {
       );
       const card = container.firstChild as HTMLElement;
 
-      expect(card.className).toContain('bg-panel-primary');
-      expect(card.className).toContain('rounded-panel');
+      // Gold variant uses gradient background
+      expect(card.style.background).toContain('linear-gradient');
+      expect(card.style.background).toContain('#FFC107');
+      expect(card.className).toContain('rounded-card');
     });
 
     it('should apply success variant', async () => {
@@ -48,8 +51,10 @@ describe('StatCard Component', () => {
       );
       const card = container.firstChild as HTMLElement;
 
-      expect(card.className).toContain('bg-panel-primary');
-      expect(card.className).toContain('rounded-panel');
+      // Success variant uses gradient background
+      expect(card.style.background).toContain('linear-gradient');
+      expect(card.style.background).toContain('#27AE60');
+      expect(card.className).toContain('rounded-card');
     });
 
     it('should apply danger variant', async () => {
@@ -59,8 +64,10 @@ describe('StatCard Component', () => {
       );
       const card = container.firstChild as HTMLElement;
 
-      expect(card.className).toContain('bg-panel-primary');
-      expect(card.className).toContain('rounded-panel');
+      // Danger variant uses gradient background
+      expect(card.style.background).toContain('linear-gradient');
+      expect(card.style.background).toContain('#E74C3C');
+      expect(card.className).toContain('rounded-card');
     });
 
     it('should apply info variant', async () => {
@@ -70,8 +77,10 @@ describe('StatCard Component', () => {
       );
       const card = container.firstChild as HTMLElement;
 
-      expect(card.className).toContain('bg-panel-primary');
-      expect(card.className).toContain('rounded-panel');
+      // Info variant uses gradient background
+      expect(card.style.background).toContain('linear-gradient');
+      expect(card.style.background).toContain('#3498DB');
+      expect(card.className).toContain('rounded-card');
     });
 
     it('should render with all required props', async () => {
@@ -81,7 +90,8 @@ describe('StatCard Component', () => {
       );
       const card = container.firstChild as HTMLElement;
 
-      expect(card.className).toContain('bg-panel-primary');
+      // Default variant uses solid background
+      expect(card.style.background).toBe('#FFF9E6');
       expect(screen.getByText('Test')).toBeInTheDocument();
       expect(screen.getByText('123')).toBeInTheDocument();
     });

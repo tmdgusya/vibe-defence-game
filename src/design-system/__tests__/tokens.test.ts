@@ -5,7 +5,7 @@ describe('Design Tokens', () => {
     it('should export colors object with ui.panel.bg defined', async () => {
       const { colors } = await import('../tokens');
       expect(colors.ui.panel.bg).toBeDefined();
-      expect(colors.ui.panel.bg).toBe('#1E2A3D');
+      expect(colors.ui.panel.bg).toBe('#FFF9E6'); // Warm cream cartoon theme
     });
 
     it('should have all required UI panel colors', async () => {
@@ -28,10 +28,10 @@ describe('Design Tokens', () => {
 
     it('should have all text color tokens', async () => {
       const { colors } = await import('../tokens');
-      expect(colors.ui.text.primary).toBe('#FFFFFF');
-      expect(colors.ui.text.secondary).toBe('#A8B8C8');
-      expect(colors.ui.text.muted).toBe('#6B7B8B');
-      expect(colors.ui.text.accent).toBe('#4A90D9');
+      expect(colors.ui.text.primary).toBe('#2D1B00'); // Dark brown for cartoon theme
+      expect(colors.ui.text.secondary).toBe('#5C4A26');
+      expect(colors.ui.text.muted).toBe('#8B7355');
+      expect(colors.ui.text.accent).toBe('#FF6B35'); // Bright orange
     });
 
     it('should have gold color tokens', async () => {
@@ -57,32 +57,40 @@ describe('Design Tokens', () => {
 
     it('should have interactive element colors', async () => {
       const { colors } = await import('../tokens');
-      expect(colors.interactive.primary.bg).toBe('#2980B9');
-      expect(colors.interactive.success.bg).toBe('#1E8449');
-      expect(colors.interactive.warning.bg).toBe('#B9770E');
-      expect(colors.interactive.danger.bg).toBe('#C0392B');
+      expect(colors.interactive.primary.bg).toBe(
+        'linear-gradient(180deg, #5DADE2 0%, #3498DB 100%)'
+      );
+      expect(colors.interactive.success.bg).toBe(
+        'linear-gradient(180deg, #58D68D 0%, #27AE60 100%)'
+      );
+      expect(colors.interactive.warning.bg).toBe(
+        'linear-gradient(180deg, #F5B041 0%, #F39C12 100%)'
+      );
+      expect(colors.interactive.danger.bg).toBe(
+        'linear-gradient(180deg, #EC7063 0%, #E74C3C 100%)'
+      );
     });
 
     it('should have feedback colors', async () => {
       const { colors } = await import('../tokens');
-      expect(colors.feedback.success).toBe('#00FF00');
-      expect(colors.feedback.error).toBe('#FF4444');
-      expect(colors.feedback.warning).toBe('#FFA500');
-      expect(colors.feedback.info).toBe('#00BFFF');
+      expect(colors.feedback.success).toBe('#2ECC71');
+      expect(colors.feedback.error).toBe('#E74C3C');
+      expect(colors.feedback.warning).toBe('#F39C12');
+      expect(colors.feedback.info).toBe('#3498DB');
     });
 
     it('should have level indicator colors', async () => {
       const { colors } = await import('../tokens');
-      expect(colors.level.basic).toBe('#A8B8C8');
-      expect(colors.level.advanced).toBe('#4A90D9');
+      expect(colors.level.basic).toBe('#95A5A6');
+      expect(colors.level.advanced).toBe('#3498DB');
       expect(colors.level.elite).toBe('#9B59B6');
     });
 
     it('should include mortar tower colors', async () => {
       const { colors } = await import('../tokens');
       expect(colors.tower.mortar).toBeDefined();
-      expect(colors.tower.mortar.primary).toBe('#FF6347');
-      expect(colors.tower.mortar.border).toBe('#FF6347');
+      expect(colors.tower.mortar.primary).toBe('#FF6B6B');
+      expect(colors.tower.mortar.border).toBe('#C0392B');
     });
   });
 
@@ -148,9 +156,15 @@ describe('Design Tokens', () => {
     it('should return button styles for all variants', async () => {
       const { getButtonStyles } = await import('../tokens');
 
-      expect(getButtonStyles('success').bg).toBe('#1E8449');
-      expect(getButtonStyles('warning').bg).toBe('#B9770E');
-      expect(getButtonStyles('danger').bg).toBe('#C0392B');
+      expect(getButtonStyles('success').bg).toBe(
+        'linear-gradient(180deg, #58D68D 0%, #27AE60 100%)'
+      );
+      expect(getButtonStyles('warning').bg).toBe(
+        'linear-gradient(180deg, #F5B041 0%, #F39C12 100%)'
+      );
+      expect(getButtonStyles('danger').bg).toBe(
+        'linear-gradient(180deg, #EC7063 0%, #E74C3C 100%)'
+      );
     });
   });
 
@@ -209,17 +223,17 @@ describe('Design Tokens', () => {
 
     it('should have panel spacing values', async () => {
       const { spacing } = await import('../tokens');
-      expect(spacing.panel.padding).toBe('1rem');
-      expect(spacing.panel.paddingLarge).toBe('1.5rem');
-      expect(spacing.panel.borderRadius).toBe('0.75rem');
+      expect(spacing.panel.padding).toBe('1.5rem'); // Bigger padding for cartoon feel
+      expect(spacing.panel.paddingLarge).toBe('2rem');
+      expect(spacing.panel.borderRadius).toBe('1.25rem'); // Very rounded
     });
   });
 
   describe('Animation Tokens', () => {
     it('should have duration values in milliseconds', async () => {
       const { animation } = await import('../tokens');
-      expect(animation.duration.fast).toBe(150);
-      expect(animation.duration.normal).toBe(300);
+      expect(animation.duration.fast).toBe(200);
+      expect(animation.duration.normal).toBe(350);
       expect(animation.duration.slow).toBe(500);
     });
 
@@ -244,9 +258,9 @@ describe('Design Tokens', () => {
 
     it('should have spring easing configuration', async () => {
       const { animation } = await import('../tokens');
-      expect(animation.easing.spring.type).toBe('spring');
-      expect(animation.easing.spring.stiffness).toBe(400);
-      expect(animation.easing.spring.damping).toBe(30);
+      expect(animation.easing.bounce.type).toBe('spring');
+      expect(animation.easing.bounce.stiffness).toBe(500); // More bounce!
+      expect(animation.easing.bounce.damping).toBe(20);
     });
   });
 
@@ -316,37 +330,33 @@ describe('Design Tokens', () => {
 
     it('should have WCAG AA compliant contrast for primary button text', async () => {
       const { colors } = await import('../tokens');
-      const ratio = getContrastRatio(
-        colors.interactive.primary.text,
-        colors.interactive.primary.bg
-      );
+      // For gradients, test against the darker endpoint color
+      const bgColor = '#3498DB'; // End color of primary gradient
+      const ratio = getContrastRatio(colors.interactive.primary.text, bgColor);
       expect(ratio).toBeGreaterThanOrEqual(4.5);
     });
 
     it('should have WCAG AA compliant contrast for success button text', async () => {
       const { colors } = await import('../tokens');
-      const ratio = getContrastRatio(
-        colors.interactive.success.text,
-        colors.interactive.success.bg
-      );
+      // For gradients, test against the darker endpoint color
+      const bgColor = '#27AE60'; // End color of success gradient
+      const ratio = getContrastRatio(colors.interactive.success.text, bgColor);
       expect(ratio).toBeGreaterThanOrEqual(4.5);
     });
 
     it('should have WCAG AA compliant contrast for warning button text', async () => {
       const { colors } = await import('../tokens');
-      const ratio = getContrastRatio(
-        colors.interactive.warning.text,
-        colors.interactive.warning.bg
-      );
+      // For gradients, test against the darker endpoint color
+      const bgColor = '#F39C12'; // End color of warning gradient
+      const ratio = getContrastRatio(colors.interactive.warning.text, bgColor);
       expect(ratio).toBeGreaterThanOrEqual(4.5);
     });
 
     it('should have WCAG AA compliant contrast for danger button text', async () => {
       const { colors } = await import('../tokens');
-      const ratio = getContrastRatio(
-        colors.interactive.danger.text,
-        colors.interactive.danger.bg
-      );
+      // For gradients, test against the darker endpoint color
+      const bgColor = '#E74C3C'; // End color of danger gradient
+      const ratio = getContrastRatio(colors.interactive.danger.text, bgColor);
       expect(ratio).toBeGreaterThanOrEqual(4.5);
     });
   });

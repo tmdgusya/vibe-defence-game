@@ -201,6 +201,8 @@ global.requestAnimationFrame = vi.fn((cb) =>
 global.cancelAnimationFrame = vi.fn() as unknown as typeof cancelAnimationFrame;
 
 Object.defineProperty(global.performance, 'now', {
+  writable: true,
+  configurable: true,
   value: vi.fn(() => Date.now()),
 });
 
