@@ -60,7 +60,7 @@ describe('EnemySystem', () => {
 
       expect(config.enemies).toHaveLength(1);
       expect(config.enemies[0].type).toBe(EnemyType.BASIC);
-      expect(config.enemies[0].count).toBe(5);
+      expect(config.enemies[0].count).toBe(10); // Updated for balance patch!
       expect(config.spawnInterval).toBe(1500);
       expect(config.waveBonus).toBe(25);
     });

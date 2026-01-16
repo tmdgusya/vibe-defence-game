@@ -108,6 +108,11 @@ export default class BootScene extends Phaser.Scene {
     this.load.image('tower-wallnut', '/assets/towers/tower-wallnut-1.png');
     this.load.image('tower-wallnut-2', '/assets/towers/tower-wallnut-2.png');
 
+    // Load tower sprites - Mortar (all 3 levels)
+    this.load.image('tower-mortar', '/assets/towers/tower-mortar-1.png');
+    this.load.image('tower-mortar-2', '/assets/towers/tower-mortar-2.png');
+    this.load.image('tower-mortar-3', '/assets/towers/tower-mortar-3.png');
+
     // Load projectile sprites
     this.load.image(
       'projectile-placeholder',

@@ -307,9 +307,9 @@ describe('TowerSystem', () => {
           2
         );
 
-        expect(towerData.splashDamage).toBe(12);
-        expect(towerData.splashRadius).toBe(1.5);
-        expect(towerData.damage).toBe(6);
+        expect(towerData.splashDamage).toBe(18); // Buffed! (12 → 18)
+        expect(towerData.splashRadius).toBe(2.2); // Buffed! (1.5 → 2.2)
+        expect(towerData.damage).toBe(9); // Buffed! (6 → 9)
       });
 
       it('should scale splash damage with level', () => {

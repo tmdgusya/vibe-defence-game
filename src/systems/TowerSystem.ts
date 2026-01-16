@@ -63,24 +63,24 @@ const TOWER_CONFIG: TowerConfiguration = {
       attackSpeed: 0,
       range: 1,
       cost: 50,
-      resourceGeneration: 5, // 5 gold
-      resourceInterval: 10000, // every 10 seconds
+      resourceGeneration: 10, // 10 gold (2배 증가!)
+      resourceInterval: 7000, // every 7 seconds (더 빠르게!)
     },
     [TowerLevel.ADVANCED]: {
       damage: 0,
       attackSpeed: 0,
       range: 1.2,
       cost: 85,
-      resourceGeneration: 8, // 8 gold
-      resourceInterval: 8000, // every 8 seconds
+      resourceGeneration: 16, // 16 gold (2배 증가!)
+      resourceInterval: 5500, // every 5.5 seconds (더 빠르게!)
     },
     [TowerLevel.ELITE]: {
       damage: 0,
       attackSpeed: 0,
       range: 1.44,
       cost: 120,
-      resourceGeneration: 12, // 12 gold
-      resourceInterval: 6000, // every 6 seconds
+      resourceGeneration: 25, // 25 gold (2배 이상 증가!)
+      resourceInterval: 4000, // every 4 seconds (더 빠르게!)
     },
   },
   [TowerType.WALLNUT]: {
@@ -105,28 +105,28 @@ const TOWER_CONFIG: TowerConfiguration = {
   },
   [TowerType.MORTAR]: {
     [TowerLevel.BASIC]: {
-      damage: 6,
+      damage: 9, // 50% 증가 (6 → 9)
       attackSpeed: 0.8,
       range: 2.5,
       cost: 175,
-      splashDamage: 12,
-      splashRadius: 1.5,
+      splashDamage: 18, // 50% 증가 (12 → 18)
+      splashRadius: 2.2, // 47% 증가 (1.5 → 2.2) - 더 넓은 범위!
     },
     [TowerLevel.ADVANCED]: {
-      damage: 9,
+      damage: 14, // 56% 증가 (9 → 14)
       attackSpeed: 1.0,
       range: 2.8,
       cost: 300,
-      splashDamage: 18,
-      splashRadius: 1.8,
+      splashDamage: 27, // 50% 증가 (18 → 27)
+      splashRadius: 2.7, // 50% 증가 (1.8 → 2.7)
     },
     [TowerLevel.ELITE]: {
-      damage: 14,
+      damage: 21, // 50% 증가 (14 → 21)
       attackSpeed: 1.2,
       range: 3.2,
       cost: 500,
-      splashDamage: 28,
-      splashRadius: 2.2,
+      splashDamage: 42, // 50% 증가 (28 → 42)
+      splashRadius: 3.3, // 50% 증가 (2.2 → 3.3) - 매우 넓음!
     },
   },
 };

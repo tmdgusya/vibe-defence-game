@@ -29,79 +29,79 @@ interface WaveConfig {
  */
 const WAVE_CONFIGS: Record<number, WaveConfig> = {
   1: {
-    enemies: [{ type: EnemyType.BASIC, count: 5 }],
+    enemies: [{ type: EnemyType.BASIC, count: 10 }], // 2배 증가! (5 → 10)
     spawnInterval: 1500,
     waveBonus: 25,
   },
   2: {
-    enemies: [{ type: EnemyType.BASIC, count: 8 }],
+    enemies: [{ type: EnemyType.BASIC, count: 15 }], // 거의 2배! (8 → 15)
     spawnInterval: 1300,
     waveBonus: 30,
   },
   3: {
     enemies: [
-      { type: EnemyType.BASIC, count: 6 },
-      { type: EnemyType.TANK, count: 2, delay: 2000 },
+      { type: EnemyType.BASIC, count: 12 }, // 2배! (6 → 12)
+      { type: EnemyType.TANK, count: 4, delay: 2000 }, // 2배! (2 → 4)
     ],
     spawnInterval: 1200,
     waveBonus: 40,
   },
   4: {
     enemies: [
-      { type: EnemyType.SWARM, count: 3 },
-      { type: EnemyType.BASIC, count: 4, delay: 1500 },
+      { type: EnemyType.SWARM, count: 6 }, // 2배! (3 → 6)
+      { type: EnemyType.BASIC, count: 8, delay: 1500 }, // 2배! (4 → 8)
     ],
     spawnInterval: 1100,
     waveBonus: 45,
   },
   5: {
     enemies: [
-      { type: EnemyType.BASIC, count: 8 },
-      { type: EnemyType.FLYING, count: 3, delay: 3000 },
-      { type: EnemyType.BOSS, count: 1, delay: 5000 },
+      { type: EnemyType.BASIC, count: 15 }, // 거의 2배! (8 → 15)
+      { type: EnemyType.FLYING, count: 6, delay: 3000 }, // 2배! (3 → 6)
+      { type: EnemyType.BOSS, count: 1, delay: 5000 }, // 보스는 유지
     ],
     spawnInterval: 1000,
     waveBonus: 75,
   },
   6: {
     enemies: [
-      { type: EnemyType.BASIC, count: 10 },
-      { type: EnemyType.TANK, count: 3, delay: 2000 },
+      { type: EnemyType.BASIC, count: 18 }, // 1.8배! (10 → 18)
+      { type: EnemyType.TANK, count: 6, delay: 2000 }, // 2배! (3 → 6)
     ],
     spawnInterval: 1000,
     waveBonus: 50,
   },
   7: {
     enemies: [
-      { type: EnemyType.SWARM, count: 4 },
-      { type: EnemyType.ARMORED, count: 2, delay: 3000 },
+      { type: EnemyType.SWARM, count: 8 }, // 2배! (4 → 8)
+      { type: EnemyType.ARMORED, count: 4, delay: 3000 }, // 2배! (2 → 4)
     ],
     spawnInterval: 900,
     waveBonus: 60,
   },
   8: {
     enemies: [
-      { type: EnemyType.FLYING, count: 6 },
-      { type: EnemyType.TANK, count: 4, delay: 2500 },
+      { type: EnemyType.FLYING, count: 10 }, // 1.67배! (6 → 10)
+      { type: EnemyType.TANK, count: 7, delay: 2500 }, // 1.75배! (4 → 7)
     ],
     spawnInterval: 900,
     waveBonus: 70,
   },
   9: {
     enemies: [
-      { type: EnemyType.BASIC, count: 8 },
-      { type: EnemyType.ARMORED, count: 4, delay: 2000 },
-      { type: EnemyType.TANK, count: 2, delay: 4000 },
+      { type: EnemyType.BASIC, count: 15 }, // 거의 2배! (8 → 15)
+      { type: EnemyType.ARMORED, count: 7, delay: 2000 }, // 1.75배! (4 → 7)
+      { type: EnemyType.TANK, count: 4, delay: 4000 }, // 2배! (2 → 4)
     ],
     spawnInterval: 800,
     waveBonus: 80,
   },
   10: {
     enemies: [
-      { type: EnemyType.BASIC, count: 10 },
-      { type: EnemyType.TANK, count: 3, delay: 2000 },
-      { type: EnemyType.FLYING, count: 2, delay: 4000 },
-      { type: EnemyType.BOSS, count: 1, delay: 6000 },
+      { type: EnemyType.BASIC, count: 18 }, // 1.8배! (10 → 18)
+      { type: EnemyType.TANK, count: 6, delay: 2000 }, // 2배! (3 → 6)
+      { type: EnemyType.FLYING, count: 4, delay: 4000 }, // 2배! (2 → 4)
+      { type: EnemyType.BOSS, count: 2, delay: 6000 }, // 보스도 2마리로!
     ],
     spawnInterval: 800,
     waveBonus: 100,
