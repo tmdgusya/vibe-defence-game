@@ -135,6 +135,7 @@ export type GameEventType =
   | 'gameOver'
   | 'gamePaused'
   | 'gameResumed'
+  | 'gameReset'
   | 'towerDragStart'
   | 'towerDragEnd'
   | 'towerDrop'
@@ -193,6 +194,7 @@ export interface GameEvents {
   gameOver: { won: boolean; score: number };
   gamePaused: Record<string, never>;
   gameResumed: Record<string, never>;
+  gameReset: Record<string, never>;
 
   // Drag and drop events
   towerDragStart: { towerType: TowerType };

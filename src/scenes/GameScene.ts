@@ -119,6 +119,12 @@ export default class GameScene extends Phaser.Scene {
       this.scene.resume();
     });
 
+    // Listen for game reset - restart the entire scene
+    subscribeToEvent('gameReset', () => {
+      console.log('GameScene: Received gameReset event, restarting scene...');
+      this.scene.restart();
+    });
+
     // Listen for wave completion to advance wave counter
     subscribeToEvent('waveCompleted', (data: GameEvents['waveCompleted']) => {
       this.currentWave = data.wave + 1;

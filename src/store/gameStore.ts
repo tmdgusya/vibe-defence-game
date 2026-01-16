@@ -190,6 +190,9 @@ export const useGameStore = create<GameState & GameActions>()(
             statistics: updatedStatistics,
             _hasHydrated: true,
           });
+
+          // Emit gameReset event to notify Phaser scene to restart
+          EventBus.emit('gameReset', {});
         },
 
         // Hydration flag
