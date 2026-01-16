@@ -65,10 +65,9 @@ export class Projectile extends Phaser.GameObjects.Container {
 
     // Check if target is still valid
     if (!this.target || !this.target.active) {
-      if (!this.projectileData.splashRadius) {
-        this.destroy();
-        return;
-      }
+      // Target is dead - destroy projectile immediately
+      this.destroy();
+      return;
     }
 
     // Calculate direction to target position

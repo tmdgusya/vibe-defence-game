@@ -354,6 +354,9 @@ export default class GameScene extends Phaser.Scene {
     cell.setData('occupied', true);
     cell.setData('tower', tower);
 
+    // Setup drag-to-merge for this tower
+    this.setupTowerDragToMerge(tower);
+
     emitEvent('towerPlaced', { tower: towerData });
     emitEvent('goldChanged', {
       gold: this.currentGold - cost,
@@ -535,6 +538,60 @@ export default class GameScene extends Phaser.Scene {
     }
   }
 
+  private setupTowerDragToMerge(tower: Tower): void {
+    tower.on('dragend', () => {
+      this.handleTowerDrop(tower);
+    });
+  }
+
+  private handleTowerDrop(draggedTower: Tower): void {
+    const draggedData = draggedTower.getData();
+    const dropX = draggedTower.x;
+    const dropY = draggedTower.y;
+
+    // Convert screen position to grid position
+    const targetGridX = Math.round(
+      (dropX - GRID_CONFIG.CELL_SIZE / 2) / GRID_CONFIG.CELL_SIZE
+    );
+    const targetGridY = Math.round(
+      (dropY - GRID_CONFIG.CELL_SIZE / 2) / GRID_CONFIG.CELL_SIZE
+    );
+
+    console.log(
+      `Tower dropped at grid (${targetGridX}, ${targetGridY}), original (${draggedData.gridX}, ${draggedData.gridY})`
+    );
+
+    // Check if dropped on a different cell
+    if (
+      targetGridX !== draggedData.gridX ||
+      targetGridY !== draggedData.gridY
+    ) {
+      // Check if there's a tower at the target position
+      const targetCell = this.getCell(targetGridX, targetGridY);
+
+      if (targetCell && targetCell.getData('occupied')) {
+        const targetTower = targetCell.getData('tower') as Tower;
+
+        if (targetTower && targetTower !== draggedTower) {
+          const targetData = targetTower.getData();
+
+          // Check if towers can be merged
+          if (this.towerSystem.canMerge(draggedData, targetData)) {
+            console.log('Merge possible! Performing merge...');
+            this.performMerge(draggedTower, targetTower);
+            return;
+          } else {
+            console.log('Merge not possible - different type or level');
+          }
+        }
+      }
+    }
+
+    // If no merge happened, reset tower to original position
+    console.log('No merge - resetting to original position');
+    draggedTower.resetPosition();
+  }
+
   private checkForMerge(tower: Tower): void {
     const towerData = tower.getData();
     const neighbors = this.getNeighbors(towerData.gridX, towerData.gridY);
@@ -684,6 +741,9 @@ export default class GameScene extends Phaser.Scene {
         const cell = this.gridCells[result.gridY][result.gridX];
         cell.setData('occupied', true);
         cell.setData('tower', newTower);
+
+        // Setup drag-to-merge for the newly merged tower
+        this.setupTowerDragToMerge(newTower);
 
         newTower.setScale(0);
         this.tweens.add({

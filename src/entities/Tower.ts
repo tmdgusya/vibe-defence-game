@@ -8,6 +8,9 @@ export class Tower extends Phaser.GameObjects.Container {
   private towerData: TowerData;
   private rangeVisible: boolean = false;
   private canMerge: boolean = false;
+  private isDragging: boolean = false;
+  private originalX: number = 0;
+  private originalY: number = 0;
 
   constructor(scene: Phaser.Scene, data: TowerData) {
     const x = data.gridX * GRID_CONFIG.CELL_SIZE + GRID_CONFIG.CELL_SIZE / 2;
@@ -16,6 +19,8 @@ export class Tower extends Phaser.GameObjects.Container {
     super(scene, x, y);
 
     this.towerData = data;
+    this.originalX = x;
+    this.originalY = y;
 
     this.createSprite();
     this.createRangeIndicator();
@@ -80,13 +85,89 @@ export class Tower extends Phaser.GameObjects.Container {
   }
 
   private setupInteractions(): void {
+    // Make tower interactive with explicit bounds
+    const cellSize = GRID_CONFIG.CELL_SIZE;
+    this.setInteractive(
+      new Phaser.Geom.Rectangle(
+        -cellSize / 2,
+        -cellSize / 2,
+        cellSize,
+        cellSize
+      ),
+      Phaser.Geom.Rectangle.Contains
+    );
+
+    // Enable dragging
+    this.scene.input.setDraggable(this);
+
+    // Hover effects
     this.on('pointerover', () => {
-      this.showRange();
+      if (!this.isDragging) {
+        this.showRange();
+      }
     });
 
     this.on('pointerout', () => {
-      this.hideRange();
+      if (!this.isDragging) {
+        this.hideRange();
+      }
     });
+
+    // Drag events
+    this.on('dragstart', () => {
+      this.onDragStart();
+    });
+
+    this.on('drag', (pointer: Phaser.Input.Pointer) => {
+      this.onDrag(pointer);
+    });
+
+    this.on('dragend', () => {
+      this.onDragEnd();
+    });
+  }
+
+  private onDragStart(): void {
+    this.isDragging = true;
+    this.setAlpha(0.7);
+    this.setDepth(1000);
+    this.showRange();
+    console.log(
+      'Tower drag started:',
+      this.towerData.type,
+      this.towerData.level
+    );
+  }
+
+  private onDrag(pointer: Phaser.Input.Pointer): void {
+    this.x = pointer.x;
+    this.y = pointer.y;
+
+    // Update range indicator position
+    this.rangeIndicator.setPosition(this.x, this.y);
+    this.mergeIndicator.setPosition(this.x, this.y);
+    this.updateRangeIndicator();
+    this.updateMergeIndicator();
+  }
+
+  private onDragEnd(): void {
+    this.isDragging = false;
+    this.setAlpha(1);
+    this.setDepth(0);
+    console.log('Tower drag ended at:', this.x, this.y);
+  }
+
+  public resetPosition(): void {
+    this.x = this.originalX;
+    this.y = this.originalY;
+    this.rangeIndicator.setPosition(this.x, this.y);
+    this.mergeIndicator.setPosition(this.x, this.y);
+    this.updateRangeIndicator();
+    this.updateMergeIndicator();
+  }
+
+  public getOriginalPosition(): { x: number; y: number } {
+    return { x: this.originalX, y: this.originalY };
   }
 
   public showRange(): void {
