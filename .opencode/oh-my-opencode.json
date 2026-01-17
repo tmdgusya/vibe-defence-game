@@ -1,0 +1,41 @@
+{
+  "$schema": "https://ohmyopencode.com/schema.json",
+  "description": "Oh My OpenCode configuration with Claude Code hooks integration",
+
+  "claude_code": {
+    "enabled": true,
+    "hooks": {
+      "PreToolUse": [
+        {
+          "matcher": "Bash",
+          "hooks": [
+            {
+              "type": "command",
+              "command": ".opencode/hooks/bash-logger.sh"
+            }
+          ]
+        }
+      ],
+      "PostToolUse": [
+        {
+          "matcher": "Edit|Write",
+          "hooks": [
+            {
+              "type": "command",
+              "command": ".opencode/hooks/quality-check.sh"
+            }
+          ]
+        }
+      ]
+    }
+  },
+
+  "disabled_hooks": [],
+
+  "disabled_mcps": [],
+
+  "experimental": {
+    "auto_compact": true,
+    "context_window_monitor": true
+  }
+}
