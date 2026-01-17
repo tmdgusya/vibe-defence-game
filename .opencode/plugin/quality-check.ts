@@ -1,4 +1,3 @@
-let hasEdited = false;
 const cooldownMs = 15_000;
 let lastRunAt = 0;
 
@@ -27,71 +26,49 @@ export const QualityCheck = async ({ $, client, project }: any) => {
         return;
       }
 
-      hasEdited = true;
-    },
-
-    event: async ({ event }: any) => {
-      if (event.type !== 'session.idle') return;
-      if (!hasEdited) return;
-
       const now = Date.now();
       if (now - lastRunAt < cooldownMs) return;
 
       lastRunAt = now;
-      hasEdited = false;
 
-      const outputFile = `/tmp/opencode-eslint-${Date.now()}.log`;
-      await $`sh -c ${'npx eslint src/ 2>&1 | head -50 > ' + outputFile}`;
+      const testOutputFile = `/tmp/opencode-test-${Date.now()}.log`;
+      await $`sh -c ${'npm run test:run > ' + testOutputFile + ' 2>&1 || true'}`;
 
-      const eslintOutput = await $`cat ${outputFile}`.quiet();
-      const eslintText =
-        eslintOutput.stdout?.toString() ||
-        eslintOutput.stderr?.toString() ||
+      const testOutput = await $`cat ${testOutputFile}`.quiet();
+      const testText =
+        testOutput.stdout?.toString() || testOutput.stderr?.toString() || '';
+
+      const typecheckFile = `/tmp/opencode-typecheck-${Date.now()}.log`;
+      await $`sh -c ${'npm run type-check > ' + typecheckFile + ' 2>&1 || true'}`;
+
+      const typecheckOutput = await $`cat ${typecheckFile}`.quiet();
+      const typecheckText =
+        typecheckOutput.stdout?.toString() ||
+        typecheckOutput.stderr?.toString() ||
         '';
 
-      const prettierFile = `/tmp/opencode-prettier-${Date.now()}.log`;
-      await $`sh -c ${'npx prettier --check src/ 2>&1 | head -50 > ' + prettierFile}`;
-
-      const prettierOutput = await $`cat ${prettierFile}`.quiet();
-      const prettierText =
-        prettierOutput.stdout?.toString() ||
-        prettierOutput.stderr?.toString() ||
-        '';
-
-      const hasEslintIssues =
-        eslintText.trim() !== '' && !eslintText.includes('no problems');
-      const hasPrettierIssues =
-        prettierText.trim() !== '' &&
-        !prettierText.includes('All matched files');
+      const hasTestFailures =
+        testText.trim() !== '' &&
+        (testText.includes('FAIL') ||
+          testText.includes('error') ||
+          testText.includes('failed'));
+      const hasTypeErrors = typecheckText.trim() !== '';
 
       let message = `Post-turn quality check completed.\n\n`;
 
-      if (hasEslintIssues) {
-        message += `--- ESLINT OUTPUT ---\n${eslintText}\n--- END ESLINT ---\n\n`;
+      if (hasTestFailures) {
+        message += `--- TEST OUTPUT ---\n${testText}\n--- END TEST OUTPUT ---\n\n`;
       }
 
-      if (hasPrettierIssues) {
-        message += `--- PRETTIER OUTPUT ---\n${prettierText}\n--- END PRETTIER ---\n\n`;
+      if (hasTypeErrors) {
+        message += `--- TYPE CHECK OUTPUT ---\n${typecheckText}\n--- END TYPE CHECK OUTPUT ---\n\n`;
       }
 
-      if (!hasEslintIssues && !hasPrettierIssues) {
-        message += `✅ No ESLint or Prettier issues found.\n`;
+      if (!hasTestFailures && !hasTypeErrors) {
+        message += `✅ All tests passed and no type errors found.\n`;
       }
 
-      if (hasEslintIssues || hasPrettierIssues) {
-        message += `\nAttempting auto-fix...\n`;
-
-        try {
-          await $`npx eslint src/ --fix`.quiet();
-          await $`npx prettier --write src/`.quiet();
-
-          message += `✅ Auto-fix applied. Please verify the changes.\n`;
-        } catch (error) {
-          message += `⚠️ Auto-fix encountered errors: ${error}\n`;
-        }
-      }
-
-      const sessionID = event.properties.sessionID;
+      const sessionID = input.session?.id;
       if (sessionID) {
         await client.session.prompt({
           path: { id: sessionID },
